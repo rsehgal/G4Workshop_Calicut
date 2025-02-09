@@ -1,0 +1,8 @@
+Run the shell script as follows : 
+. create_geant_app.sh [ProjectName]
+
+This create a complete skeleton of Geant4 application with all the required files.
+
+Name of all the files will start with the project name that is provided to the shell script.
+
+
