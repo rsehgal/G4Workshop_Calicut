@@ -6,6 +6,7 @@
 #include "TF1.h"
 
 class G4HCofThisEvent;
+class G4LogicalVolume;
 
 class NaI_SensitiveDetector : public G4VSensitiveDetector {
 
@@ -13,6 +14,7 @@ class NaI_SensitiveDetector : public G4VSensitiveDetector {
   TF1 *fResolFun;
 public:
   NaI_SensitiveDetector(const G4String &name);
+  NaI_SensitiveDetector(const G4String &name, G4LogicalVolume *sensitiveVolume);
   virtual ~NaI_SensitiveDetector();
 
   virtual void Initialize(G4HCofThisEvent *hce);
