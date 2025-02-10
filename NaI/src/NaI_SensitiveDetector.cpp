@@ -16,11 +16,8 @@ NaI_SensitiveDetector::NaI_SensitiveDetector(const G4String &name) : G4VSensitiv
   fp->Close();
 }
 NaI_SensitiveDetector::NaI_SensitiveDetector(const G4String &name, G4LogicalVolume *sensitiveVolume)
-    : G4VSensitiveDetector(name), fEDep(0)
+    : NaI_SensitiveDetector(name)
 {
-  TFile *fp = new TFile("calibE.root", "r");
-  fResolFun = (TF1 *)fp->Get("sigmaCalib");
-  fp->Close();
   G4SDManager::GetSDMpointer()->AddNewDetector(this);
   sensitiveVolume->SetSensitiveDetector(this);
 }
