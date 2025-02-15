@@ -1,0 +1,49 @@
+
+------------------------
+** C++ Cheat Sheet **
+------------------------
+
+1) Class is basically a user-defined data type
+
+2) The variables of class is known as objects
+
+3) Class contains following
+   (a) Data members :  The variable that are defined inside the class
+   (b) Member functions : The functions that are defined inside the class
+       These member function can operate only on the variable defined inside the class
+
+4) Constructor : A special function without any return type and is called automatically
+   upon creation of objects of class
+
+5) Construct can be default (without any parameters), or parameterized constructor.
+
+6) Its always a good practice to define constructor. These are used to set the data member
+   upon creation of object.
+   
+
+7) If the constructors are not defined, the compiler will create a default constructor.
+
+8) But if any constructor is defined by user, the compiler will not create the default constructor, which is sometimes requiried, otherwise the code will not compile
+
+9) Hence, One must define a default constructor to avoid silly compilation error.
+
+10) Two types of classes are there:
+   (a) Abstract classes
+   (b) Concrete classes
+
+11) Object of Concrete classes can be made
+
+12) Object of Abstract classes cannot be made
+
+13) Inheriting an abstract class forces to implement all the pure virtual function
+   otherwise the derived class itself become an Abstract class
+
+14) Pointers of base class can hold the reference to the object of base class
+    (A very important concept, which is extremely used while write Geant4 simulation code)
+
+15) If a base class pointer is hold a reference to derived class object. Then it can be converted to derived class pointer static casting as follows:
+    
+    Derived  *derivedPtr = static_cast<Derived*>(basePtr)
+
+16) Geant4 is a toolkit consists of thousands of classes, and it exploits the concept of inheritance, Hence keeping above points in mind will help in writing good simulation code.
+
