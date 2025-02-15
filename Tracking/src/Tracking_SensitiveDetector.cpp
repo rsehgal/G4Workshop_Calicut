@@ -22,7 +22,7 @@ void Tracking_SensitiveDetector::Initialize(G4HCofThisEvent *hcofThisEvent){
 G4bool Tracking_SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
     G4Track* track = step->GetTrack();
     G4double energy = track->GetKineticEnergy();
-    G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
+    //G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
     G4StepPoint *preStepPt = step->GetPreStepPoint();
     G4StepPoint *postStepPt = step->GetPostStepPoint();
     Tracking_SensitiveDetector_Hit *hit = new Tracking_SensitiveDetector_Hit;
@@ -32,7 +32,7 @@ G4bool Tracking_SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*
 	    G4ThreeVector momDir = preStepPt->GetMomentum();//Direction();
    	    G4String name = track->GetVolume()->GetName();
             G4int layerNo = track->GetVolume()->GetCopyNo();
-	    std::cout << name << " : Pos : " << pos << " : Momentum Direction : " << momDir  <<  std::endl;
+	    //std::cout << name << " : Pos : " << pos << " : Momentum Direction : " << momDir  <<  std::endl;
 
     	    hit->Set(pos,momDir,name,layerNo);
 	    

@@ -1,2 +1,5 @@
 /run/initialize
-/run/beamOn 1000
+/run/printProgress 10000
+#/geometry/navigator/verbose 1
+/run/beamOn 200000
+

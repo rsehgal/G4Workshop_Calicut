@@ -8,8 +8,15 @@
 #include "Tracking_PrimaryGeneratorAction.h"
 #include "Tracking_SteppingAction.h"
 #include "Tracking_EventAction.h"
+#include "Tracking_TrackingAction.h"
 #include "Tracking_RunAction.h"
+#include "CLHEP/Random/Random.h"
+#include "CLHEP/Random/RanecuEngine.h"
 int main(int argc, char** argv) {
+  CLHEP::RanecuEngine *ranecuEngine = new CLHEP::RanecuEngine;
+  CLHEP::HepRandom::setTheEngine(ranecuEngine);
+  CLHEP::HepRandom::setTheSeed(static_cast<int>(getpid()));
+
     G4UIExecutive* ui = nullptr;
     if (argc == 1) {
         ui = new G4UIExecutive(argc, argv);
@@ -22,6 +29,7 @@ int main(int argc, char** argv) {
     runManager->SetUserAction(new Tracking_SteppingAction());
     runManager->SetUserAction(new Tracking_EventAction());
     runManager->SetUserAction(new Tracking_RunAction());
+    runManager->SetUserAction(new Tracking_TrackingAction());
     G4VisManager* visManager = new G4VisExecutive();
     visManager->Initialize();
 

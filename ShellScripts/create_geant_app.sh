@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 EOF
+echo "Main program files created in current directory."
 
 # Create DetectorConstruction header file
 cat << EOF > $PROJECT_NAME/include/${DETECTOR_CONSTRUCTION}.h
@@ -89,6 +90,7 @@ public:
 
 #endif
 EOF
+
 
 # Create DetectorConstruction source file
 cat << EOF > $PROJECT_NAME/src/${DETECTOR_CONSTRUCTION}.cpp
@@ -125,6 +127,7 @@ G4VPhysicalVolume* ${DETECTOR_CONSTRUCTION}::Construct() {
     return physWorld;
 }
 EOF
+echo "Detector Construction files created......."
 
 # Create PrimaryGeneratorAction header file
 cat << EOF > $PROJECT_NAME/include/${PRIMARY_GENERATOR_ACTION}.h
@@ -172,6 +175,7 @@ ${PRIMARY_GENERATOR_ACTION}::~${PRIMARY_GENERATOR_ACTION}() {
     delete fParticleGun;
 }
 
+
 void ${PRIMARY_GENERATOR_ACTION}::GeneratePrimaries(G4Event* anEvent) {
 
     
@@ -180,6 +184,8 @@ void ${PRIMARY_GENERATOR_ACTION}::GeneratePrimaries(G4Event* anEvent) {
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 EOF
+
+echo "Primary Generator files created......."
 
 # Create SteppingAction header file
 cat << EOF > $PROJECT_NAME/include/${STEPPING_ACTION}.h
@@ -215,6 +221,8 @@ void ${STEPPING_ACTION}::UserSteppingAction(const G4Step* step) {
     G4cout << "Energy: " << energy / MeV << " MeV" << G4endl;
 }
 EOF
+
+echo "Stepping action files created......."
 
 # Create SensitiveDetector header file
 cat << EOF > $PROJECT_NAME/include/${SENSITIVE_DETECTOR}.h
@@ -254,6 +262,7 @@ G4bool ${SENSITIVE_DETECTOR}::ProcessHits(G4Step* step, G4TouchableHistory*) {
     return true;
 }
 EOF
+echo "Sensitive Detector files created......."
 
 # Create TrackingAction header file
 cat << EOF > $PROJECT_NAME/include/${TRACKING_ACTION}.h
@@ -295,9 +304,9 @@ std::cout <<"Tracking Action ends....." << std::endl;
 }
 
 EOF
+echo "Tracking Action files created......."
 
 # Print success message
-echo "Tracking Action files created in current directory."
 
 # Create EventAction header file
 cat << EOF > $PROJECT_NAME/include/${EVENT_ACTION}.h
@@ -339,7 +348,7 @@ void ${EVENT_ACTION}::EndOfEventAction(const G4Event *event){
 EOF
 
 # Print success message
-echo "EventAction class skeleton created in current directory."
+echo "EventAction files created............"
 
 # Create RunAction header file
 cat << EOF > $PROJECT_NAME/include/${RUN_ACTION}.h
@@ -382,7 +391,7 @@ void ${RUN_ACTION}::EndOfRunAction(const G4Run*){
 EOF
 
 # Print success message
-echo "RunAction class skeleton created in current directory."
+echo "RunAction files created......"
 
 # Create Hit Class header file
 cat << EOF > $PROJECT_NAME/include/${HIT}.h
@@ -413,7 +422,7 @@ ${HIT}::~${HIT}() {}
 EOF
 
 # Print success message
-echo "Hit class skeleton created in current directory."
+echo "Hit files created........"
 
 
 # Create Modular Physics  List header file
@@ -446,7 +455,7 @@ ${MODULARPHYSICSLIST}::~${MODULARPHYSICSLIST}() {}
 EOF
 
 # Print success message
-echo "Modular physics list skeleton created in current directory."
+echo "Modular physics file created........."
 
 # Create User Physics List header file
 cat << EOF > $PROJECT_NAME/include/${USERPHYSICSLIST}.h
@@ -492,7 +501,7 @@ void ${USERPHYSICSLIST}::ConstructProcess(){
 EOF
 
 # Print success message
-echo "UserPhysicsList files created in current directory."
+echo "UserPhysicsList files created......."
 
 # Create CMakeLists.txt file
 cat << EOF > $PROJECT_NAME/CMakeLists.txt
@@ -529,6 +538,7 @@ set_target_properties(\${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 # Install
 install(TARGETS \${PROJECT_NAME} DESTINATION bin)
 EOF
+echo "CMakeLists.txt file created......."
 
 # Create mac file for default visualization
 cat << EOF > $PROJECT_NAME/vis.mac
@@ -599,6 +609,7 @@ cat << EOF > $PROJECT_NAME/vis.mac
 #/vis/viewer/flush
 
 EOF
+echo "Sample macro file created......."
 # Print success message
 echo "Geant4 application skeleton created in '$PROJECT_NAME' directory."
 

@@ -20,7 +20,7 @@ void Tracking_EventAction::BeginOfEventAction(const G4Event *event){
 void Tracking_EventAction::EndOfEventAction(const G4Event *event){
     //TODO : All the required logic you want to do at the end
     //       of each event
-    std::cout <<"====== Info from EndOfEventAction =====" << std::endl;
+    //std::cout <<"====== Info from EndOfEventAction =====" << std::endl;
     G4HCofThisEvent *hce = event->GetHCofThisEvent();
     G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID("LayersHitsCollection");
     LayersHitsCollection *layersHitsCollection = static_cast<LayersHitsCollection*>(hce->GetHC(hcID));
@@ -32,7 +32,7 @@ void Tracking_EventAction::EndOfEventAction(const G4Event *event){
     G4int eventNo = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID(); 
     for(unsigned int i = 0 ; i < collSize ; i++){
         Tracking_SensitiveDetector_Hit *hit = (*layersHitsCollection)[i];
-	hit->Print();
+	//hit->Print();
 	
 	double resolution = 0.01 * cm;
  	double smearedPosX = G4RandGauss::shoot(hit->GetPosition().x(), resolution);
@@ -56,6 +56,6 @@ void Tracking_EventAction::EndOfEventAction(const G4Event *event){
 	analMan->FillNtupleDColumn(0,10,eventNo);
         analMan->AddNtupleRow(0);
     } 
-    std::cout <<"=======================================" << std::endl;
+    //std::cout <<"=======================================" << std::endl;
 }
 
