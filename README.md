@@ -1,3 +1,7 @@
+--------------------------------------------------
+GEANT4 WORKSHOP : University of Calicut
+--------------------------------------------------
+
 **This repository contains programs to be used during the Workshop**
 
 **Prerequisites** : 
