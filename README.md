@@ -15,9 +15,9 @@ GEANT4 WORKSHOP : University of Calicut
 2) Unzip the file  
  
 3) There is a directory called ShellScripts which contains a helper shell script that can be used to generated the Skeleton Geant4 application.  
-   Go inside ShellScripts directory and run following command
+   Go inside ShellScripts directory and run following command   
    . create_geant_app.sh <projectName>  
-   For Eg.  
+   For Eg.    
    . create_geant_app.sh Dummy  
 
 4) This will create a sample skeleton Geant4 application.  
