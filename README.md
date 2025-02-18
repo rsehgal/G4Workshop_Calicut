@@ -39,7 +39,7 @@ NOTE : This will just create a skeleton application. You have to add the code as
 ---------------------------------------------  
 COMPILING the Tracking code
 ---------------------------------------------  
-Simple simulation code is provided to generated the data Track reconstruction excercise 2, 3, 4 below  
+Simple simulation code is provided to generated the data required for **Track reconstruction** excercise 2, 3, 4 below  
 
 Here are the instructions to compile and run the code 
 
