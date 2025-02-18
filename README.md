@@ -36,6 +36,24 @@ GEANT4 WORKSHOP : University of Calicut
 
 NOTE : This will just create a skeleton application. You have to add the code as per the handon exercise mentioned here  
 
+---------------------------------------------  
+COMPILING the Tracking code
+---------------------------------------------  
+Simple simulation code is provided to generated the data Track reconstruction excercise 2, 3, 4 below  
+
+Here are the instructions to compile and run the code 
+
+1) Inside the Tracking directory create a build sub-directory.  
+
+2) cd build  
+   cmake ..  
+   make  
+   Compilation done  
+   
+3) Now run the code:  
+   **./Tracking  muon.mac**    
+   The number events can be changed in the muon.mac file by changing **/run/beamOn **  
+
 ------------------------------  
 HANDS-ON Exercises  
 ------------------------------   
