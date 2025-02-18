@@ -29,16 +29,16 @@ GEANT4 WORKSHOP : University of Calicut
    make**  
 
 6) This will create an executable with the same as your project name.
-   In the current case this is Dummy
+   In the current case this is **Dummy**  
+  
+7) Run the executable  
+   **./Dummy**  
 
-7) Run the executable
-   **./Dummy**
+NOTE : This will just create a skeleton application. You have to add the code as per the handon exercise mentioned here  
 
-NOTE : This will just create a skeleton application. You have to add the code as per the handon exercise mentioned here 
-
-------------------------------
-HANDS-ON Exercises
-------------------------------
+------------------------------  
+HANDS-ON Exercises  
+------------------------------   
 
 1) https://github.com/rsehgal/G4Workshop_Calicut/issues/1
 2) https://github.com/rsehgal/G4Workshop_Calicut/issues/2
