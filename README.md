@@ -1,5 +1,5 @@
-**This repository contains programs to be used during the Workshop
-**
+**This repository contains programs to be used during the Workshop**
+
 **Prerequisites** : 
 1) Geant :  4.11.x
 2) ROOT
