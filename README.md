@@ -40,10 +40,10 @@ NOTE : This will just create a skeleton application. You have to add the code as
 HANDS-ON Exercises  
 ------------------------------   
 
-1) https://github.com/rsehgal/G4Workshop_Calicut/issues/1
-2) https://github.com/rsehgal/G4Workshop_Calicut/issues/2
-3) https://github.com/rsehgal/G4Workshop_Calicut/issues/3
-4) https://github.com/rsehgal/G4Workshop_Calicut/issues/4
+1) https://github.com/rsehgal/G4Workshop_Calicut/issues/1  (Generate skeleton and add you logic)  
+2) https://github.com/rsehgal/G4Workshop_Calicut/issues/2  (Code provided : **hough.cpp**)  
+3) https://github.com/rsehgal/G4Workshop_Calicut/issues/3  (Code provided : **momentumRECO.cpp**)  
+4) https://github.com/rsehgal/G4Workshop_Calicut/issues/4  (Code provided : **Kalman.cpp**)  
 
 
    
