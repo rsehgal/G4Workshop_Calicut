@@ -52,7 +52,7 @@ Here are the instructions to compile and run the code
    
 3) Now run the code:  
    **./Tracking  muon.mac**    
-   The number events can be changed in the muon.mac file by changing **/run/beamOn **  
+   The number events can be changed in the muon.mac file by changing **/run/beamOn**  
 
 ------------------------------  
 HANDS-ON Exercises  
