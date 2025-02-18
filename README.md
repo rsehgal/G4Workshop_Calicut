@@ -29,4 +29,17 @@
 
 7) Run the executable
    **./Dummy**
+
+NOTE : This will just create a skeleton application. You have to add the code as per the handon exercise mentioned here 
+
+------------------------------
+HANDS-ON Exercises
+------------------------------
+
+1) https://github.com/rsehgal/G4Workshop_Calicut/issues/1
+2) https://github.com/rsehgal/G4Workshop_Calicut/issues/2
+3) https://github.com/rsehgal/G4Workshop_Calicut/issues/3
+4) https://github.com/rsehgal/G4Workshop_Calicut/issues/4
+
+
    
