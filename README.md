@@ -25,7 +25,7 @@ GEANT4 WORKSHOP : University of Calicut
 5) Try to compile that appication using cmake : Compilation steps follows:  
    **cd Dummy  
    mkdir build  
-   cd build
+   cd build  
    cmake ..  
    make**  
 
