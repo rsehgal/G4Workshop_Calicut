@@ -25,13 +25,14 @@ GEANT4 WORKSHOP : University of Calicut
 5) Try to compile that appication using cmake : Compilation steps follows:  
    **cd Dummy  
    mkdir build  
-   cd build  
+   cd build
+   cmake ..  
    make**  
 
-6) This will create an executable with the same as your project name.
+7) This will create an executable with the same as your project name.
    In the current case this is **Dummy**  
   
-7) Run the executable  
+8) Run the executable  
    **./Dummy**  
 
 NOTE : This will just create a skeleton application. You have to add the code as per the handon exercise mentioned here  
