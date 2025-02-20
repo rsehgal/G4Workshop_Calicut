@@ -1,0 +1,14 @@
+G4Track *GetTrack() const;
+G4StepPoint *GetPreStepPoint() const;
+G4StepPoint *GetPostStepPoint() const;
+G4double GetStepLength() const;
+G4double GetTotalEnergyDeposit() const;
+G4double GetNonIonizingEnergyDeposit() const;
+G4bool IsFirstStepInVolume() const;
+G4bool IsLastStepInVolume() const;
+G4ThreeVector GetDeltaPosition() const;
+G4double GetDeltaTime() const;
+G4ThreeVector GetDeltaMomentum() const;
+G4double GetDeltaEnergy() const;
+const std::vector<const G4Track *> *GetSecondaryInCurrentStep() const;
+const G4TrackVector *GetSecondary() const;

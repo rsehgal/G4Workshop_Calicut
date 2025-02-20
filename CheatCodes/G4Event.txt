@@ -1,0 +1,3 @@
+void Print() const;
+G4int GetEventID() const;
+G4HCofThisEvent *GetHCofThisEvent() const;
