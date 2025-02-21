@@ -2,7 +2,7 @@
 
 void energyCalib(){
   TFile *fp = new TFile("energyCalib.root","RECREATE");
-  std::vector<float> channel={288,507,866,974};
+  std::vector<float> channel={251,472,829,937};
   std::vector<float> energy={356.,662.,1174.,1332.};
   TGraph *gr = new TGraph(energy.size(),&channel[0],&energy[0]);
   gr->Draw("ap");
