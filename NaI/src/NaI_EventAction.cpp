@@ -22,8 +22,12 @@ void NaI_EventAction::EndOfEventAction(const G4Event *event) {
 
   G4AnalysisManager *analMan = G4AnalysisManager::Instance();
   if (eDep > 0) {
+    double smeardEDep = G4RandGauss::shoot(eDep, 0.04385);
+    analMan->FillH1(0, eDep * 1000.);
+    analMan->FillH1(1, smeardEDep * 1000.);
+
     analMan->FillNtupleDColumn(0, 0, eDep * 1000.);
-    analMan->FillNtupleDColumn(0, 1, G4RandGauss::shoot(eDep, 0.04385) * 1000.);
+    analMan->FillNtupleDColumn(0, 1, smeardEDep * 1000.);
     analMan->AddNtupleRow(0);
   }
 }
