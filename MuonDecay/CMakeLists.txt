@@ -19,6 +19,11 @@ file(GLOB SOURCES src/*.cpp)
 file(GLOB MAC_FILES *.mac)
 file(COPY ${MAC_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+option(VERBOSE "Enabling VERBOSE information" OFF)
+if(VERBOSE)
+add_definitions(-DVERBOSE)
+endif(VERBOSE)
+
 # Add executable
 add_executable(${PROJECT_NAME} ${SOURCES} MuonDecay.cpp)
 
