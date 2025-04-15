@@ -7,7 +7,8 @@ class MuonDecay_EventAction : public G4UserEventAction {
 public:
   static bool muonStopped;
   static bool muonDecayed;
-
+  static unsigned long long muonStopTime;
+  static unsigned long long muonDecayTime;
 public:
   MuonDecay_EventAction();
   virtual ~MuonDecay_EventAction();

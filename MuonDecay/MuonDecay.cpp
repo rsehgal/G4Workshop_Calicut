@@ -8,6 +8,7 @@
 #include "MuonDecay_PrimaryGeneratorAction.h"
 #include "MuonDecay_SteppingAction.h"
 #include "MuonDecay_EventAction.h"
+#include "MuonDecay_RunAction.h"
 
 int main(int argc, char** argv) {
     G4UIExecutive* ui = nullptr;
@@ -19,6 +20,7 @@ int main(int argc, char** argv) {
     runManager->SetUserInitialization(new MuonDecay_DetectorConstruction());
     runManager->SetUserInitialization(new QGSP_BERT);
     runManager->SetUserAction(new MuonDecay_PrimaryGeneratorAction());
+    runManager->SetUserAction(new MuonDecay_RunAction());
     runManager->SetUserAction(new MuonDecay_EventAction());
     runManager->SetUserAction(new MuonDecay_SteppingAction());
 
