@@ -1,0 +1,125 @@
+#include "PSD_DetectorConstruction.h"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4NistManager.hh"
+#include "PSD_SensitiveDetector.h"
+#include "G4SDManager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4LogicalSkinSurface.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4OpticalSurface.hh"
+PSD_DetectorConstruction::PSD_DetectorConstruction() {}
+
+PSD_DetectorConstruction::~PSD_DetectorConstruction() {}
+
+G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
+{
+  G4NistManager *nist  = G4NistManager::Instance();
+  G4Material *worldMat = nist->FindOrBuildMaterial("G4_AIR");
+
+  // Modify the world volume dimension as required
+  G4Box *solidWorld            = new G4Box("World", 0.5 * m, 0.5 * m, 0.5 * m);
+  G4LogicalVolume *logicWorld  = new G4LogicalVolume(solidWorld, worldMat, "World");
+  G4VPhysicalVolume *physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
+
+  G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
+  G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
+
+  // TODO : Create your desired detectors here
+  //  Crystal
+  G4Box *solidCrystal           = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
+  G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, crystalMat, "Crystal");
+  G4VPhysicalVolume *phyCrystal =
+      new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
+  const G4int nEntries = 2;
+
+  {
+    const G4int nEntries            = 2;
+    G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
+
+    // Refractive index
+    G4double rIndex[nEntries] = {1.8, 1.8};
+
+    // Absorption length (how far photons travel before being absorbed)
+    G4double absorption[nEntries] = {50 * cm, 50 * cm};
+
+    // Scintillation emission spectrum (uniform for simplicity)
+    G4double scintSpectrum[nEntries] = {1.0, 1.0};
+
+    // Create MPT (Material Properties Table)
+    G4MaterialPropertiesTable *mptCrystal = new G4MaterialPropertiesTable();
+    mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
+    mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
+    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 100. / MeV); // Example yield
+    mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 10. * ns);
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+    // mptCrystal->AddConstProperty("FASTSCINTILLATIONRISETIME", 1. * ns);
+
+    // Attach to material
+    crystalMat->SetMaterialPropertiesTable(mptCrystal);
+  }
+
+  // PMT
+  G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
+  G4LogicalVolume *logicPMT = new G4LogicalVolume(solidPMT, pmtMat, "PMT");
+  G4VPhysicalVolume *phyPMT =
+      new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
+
+  G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
+
+  // Refractive index
+  G4double rIndex[nEntries] = {1.9, 1.9};
+
+  G4MaterialPropertiesTable *glassMPT = new G4MaterialPropertiesTable();
+  glassMPT->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
+  pmtMat->SetMaterialPropertiesTable(glassMPT);
+
+  // Define optical surface for side reflection
+  G4OpticalSurface *surfaceCrystal = new G4OpticalSurface("CrystalSurface");
+  surfaceCrystal->SetModel(unified);
+  surfaceCrystal->SetType(dielectric_dielectric);
+  surfaceCrystal->SetFinish(groundfrontpainted); // or polished
+
+  // Reflective properties
+  G4MaterialPropertiesTable *mptSurface = new G4MaterialPropertiesTable();
+  const G4int num                       = 2;
+  G4double ephoton[num]                 = {1.5 * eV, 3.5 * eV};
+  G4double reflectivity[num]            = {1.0, 1.0};
+  G4double efficiency[num]              = {0.0, 0.0};
+  mptSurface->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
+  mptSurface->AddProperty("EFFICIENCY", ephoton, efficiency, num);
+  surfaceCrystal->SetMaterialPropertiesTable(mptSurface);
+
+  // Apply skin surface to entire crystal (reflect on sides)
+  new G4LogicalSkinSurface("CrystalSkinSurface", logicCrystal, surfaceCrystal);
+
+  // Define interface between crystal and PMT — allow transmission
+  G4OpticalSurface *crystalToPMTSurface = new G4OpticalSurface("CrystalToPMT");
+  crystalToPMTSurface->SetType(dielectric_dielectric);
+  crystalToPMTSurface->SetModel(unified);
+  crystalToPMTSurface->SetFinish(polished);
+
+  // Perfect transmission (no reflectivity)
+  G4MaterialPropertiesTable *mptInterface = new G4MaterialPropertiesTable();
+  G4double reflectivity_zero[num]         = {1., 1.}; // {0.0, 0.0};
+  G4double eff_pmt[num]                   = {1., 1.}; // {0.35, 0.35};
+  // G4double eff_pmt[num]         = {1.0,1.0};
+  // mptInterface->AddProperty("REFLECTIVITY", ephoton, reflectivity_zero, num);
+  // mptInterface->AddProperty("EFFICIENCY", ephoton, eff_pmt, num);
+  crystalToPMTSurface->SetMaterialPropertiesTable(mptInterface);
+
+  // Apply border surface only at the shared face
+#if (1)
+  new G4LogicalBorderSurface("CrystalToPMT_Surface", phyCrystal, phyPMT, crystalToPMTSurface);
+#endif
+
+  // Logic to Attach sensitive detector to a logical volume
+  // PSD_SensitiveDetector* detector = new PSD_SensitiveDetector("SensitiveDetector");
+  // G4SDManager::GetSDMpointer()->AddNewDetector(detector);
+  // logicWorld->SetSensitiveDetector(detector);
+
+  return physWorld;
+}
