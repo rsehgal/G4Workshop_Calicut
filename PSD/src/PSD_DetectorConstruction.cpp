@@ -1,41 +1,41 @@
-#include "PSD_DetectorConstruction.h"
 #include "G4Box.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
 #include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
 #include "G4NistManager.hh"
-#include "PSD_SensitiveDetector.h"
+#include "G4OpticalSurface.hh"
+#include "G4PVPlacement.hh"
 #include "G4SDManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4LogicalSkinSurface.hh"
-#include "G4LogicalBorderSurface.hh"
-#include "G4OpticalSurface.hh"
+#include "PSD_DetectorConstruction.h"
+#include "PSD_PMT_SD.h"
+#include "PSD_SensitiveDetector.h"
 PSD_DetectorConstruction::PSD_DetectorConstruction() {}
 
 PSD_DetectorConstruction::~PSD_DetectorConstruction() {}
 
-G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
-{
-  G4NistManager *nist  = G4NistManager::Instance();
+G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
+  G4NistManager *nist = G4NistManager::Instance();
   G4Material *worldMat = nist->FindOrBuildMaterial("G4_AIR");
 
   // Modify the world volume dimension as required
-  G4Box *solidWorld            = new G4Box("World", 0.5 * m, 0.5 * m, 0.5 * m);
-  G4LogicalVolume *logicWorld  = new G4LogicalVolume(solidWorld, worldMat, "World");
+  G4Box *solidWorld = new G4Box("World", 0.5 * m, 0.5 * m, 0.5 * m);
+  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, worldMat, "World");
   G4VPhysicalVolume *physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
 
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
-  G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
+  G4Material *pmtMat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
   // TODO : Create your desired detectors here
   //  Crystal
-  G4Box *solidCrystal           = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
+  G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
   G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, crystalMat, "Crystal");
   G4VPhysicalVolume *phyCrystal =
       new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
   const G4int nEntries = 2;
 
   {
-    const G4int nEntries            = 2;
+    const G4int nEntries = 2;
     G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
 
     // Refractive index
@@ -63,7 +63,7 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   }
 
   // PMT
-  G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
+  G4Box *solidPMT = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
   G4LogicalVolume *logicPMT = new G4LogicalVolume(solidPMT, pmtMat, "PMT");
   G4VPhysicalVolume *phyPMT =
       new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
@@ -85,10 +85,10 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
 
   // Reflective properties
   G4MaterialPropertiesTable *mptSurface = new G4MaterialPropertiesTable();
-  const G4int num                       = 2;
-  G4double ephoton[num]                 = {1.5 * eV, 3.5 * eV};
-  G4double reflectivity[num]            = {1.0, 1.0};
-  G4double efficiency[num]              = {0.0, 0.0};
+  const G4int num = 2;
+  G4double ephoton[num] = {1.5 * eV, 3.5 * eV};
+  G4double reflectivity[num] = {1.0, 1.0};
+  G4double efficiency[num] = {0.0, 0.0};
   mptSurface->AddProperty("REFLECTIVITY", ephoton, reflectivity, num);
   mptSurface->AddProperty("EFFICIENCY", ephoton, efficiency, num);
   surfaceCrystal->SetMaterialPropertiesTable(mptSurface);
@@ -104,8 +104,8 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
 
   // Perfect transmission (no reflectivity)
   G4MaterialPropertiesTable *mptInterface = new G4MaterialPropertiesTable();
-  G4double reflectivity_zero[num]         = {1., 1.}; // {0.0, 0.0};
-  G4double eff_pmt[num]                   = {1., 1.}; // {0.35, 0.35};
+  G4double reflectivity_zero[num] = {1., 1.}; // {0.0, 0.0};
+  G4double eff_pmt[num] = {1., 1.};           // {0.35, 0.35};
   // G4double eff_pmt[num]         = {1.0,1.0};
   // mptInterface->AddProperty("REFLECTIVITY", ephoton, reflectivity_zero, num);
   // mptInterface->AddProperty("EFFICIENCY", ephoton, eff_pmt, num);
@@ -121,5 +121,8 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   // G4SDManager::GetSDMpointer()->AddNewDetector(detector);
   // logicWorld->SetSensitiveDetector(detector);
 
+  PSD_PMT_SD *sdDetector = new PSD_PMT_SD("PMT_1");
+  G4SDManager::GetSDMpointer()->AddNewDetector(sdDetector);
+  logicPMT->SetSensitiveDetector(sdDetector);
   return physWorld;
 }
