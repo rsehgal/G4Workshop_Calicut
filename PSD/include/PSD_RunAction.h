@@ -5,12 +5,15 @@ class G4Run;
 
 #include "G4UserRunAction.hh"
 #include "G4Event.hh"
+#include <vector>
 class PSD_RunAction : public G4UserRunAction {
+   std::vector<int> fPulse;
 public:
     PSD_RunAction();
     virtual ~PSD_RunAction();
     virtual void BeginOfRunAction(const G4Run*);
     virtual void EndOfRunAction(const G4Run*);
+    void FillPulse(std::vector<int> pulse);
 };
 
 #endif

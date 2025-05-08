@@ -9,6 +9,8 @@
 #include "PSD_DetectorConstruction.h"
 #include "PSD_PrimaryGeneratorAction.h"
 #include "PSD_SteppingAction.h"
+#include "PSD_EventAction.h"
+#include "PSD_RunAction.h"
 int main(int argc, char **argv) {
   G4UIExecutive *ui = nullptr;
   if (argc == 1) {
@@ -26,6 +28,8 @@ int main(int argc, char **argv) {
 
   runManager->SetUserAction(new PSD_PrimaryGeneratorAction());
   // runManager->SetUserAction(new PSD_SteppingAction());
+  runManager->SetUserAction(new PSD_RunAction());
+  runManager->SetUserAction(new PSD_EventAction());
 
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();
