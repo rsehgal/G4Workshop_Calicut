@@ -52,10 +52,17 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
     mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 100. / MeV); // Example yield
+    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV); // Example yield
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 10. * ns);
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+    //mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 10. * ns);
+    //mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 3.5*ns);  // fast
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 35.0*ns); // slow
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.85); // 85% fast
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15); // 15% slow""""""""
+
     // mptCrystal->AddConstProperty("FASTSCINTILLATIONRISETIME", 1. * ns);
 
     // Attach to material
