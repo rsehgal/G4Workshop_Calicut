@@ -28,11 +28,11 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *) {
   newHit->SetArrivalTime(track->GetGlobalTime());
   // G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
   fPmtHitCollection_1->insert(newHit);
-  newHit->Print();
+  //newHit->Print();
   // track->SetTrackStatus(fStopAndKill);
   return true;
 }
 
 void PSD_PMT_SD::EndOfEvent(G4HCofThisEvent *hce) {
-  std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
+  //std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
 }
