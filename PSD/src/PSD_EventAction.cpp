@@ -30,7 +30,7 @@ void PSD_EventAction::EndOfEventAction(const G4Event *event)
   PmtHitCollection *hitCollection = static_cast<PmtHitCollection *>(hce->GetHC(hcID));
   std::vector<int> pulse;
   for (unsigned int i = 0; i < hitCollection->entries(); i++) {
-    (*hitCollection)[i]->Print();
+    //(*hitCollection)[i]->Print();
     pulse.push_back((*hitCollection)[i]->GetArrivalTime());
   }
     fRunAction->FillPulse(pulse);
