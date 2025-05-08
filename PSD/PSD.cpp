@@ -3,6 +3,7 @@
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
 #include "QGSP_BERT.hh"
+#include "FTFP_BERT.hh"
 
 #include "G4OpticalPhysics.hh"
 #include "G4VModularPhysicsList.hh"
@@ -21,8 +22,10 @@ int main(int argc, char **argv) {
   runManager->SetUserInitialization(new PSD_DetectorConstruction());
   // runManager->SetUserInitialization(new QGSP_BERT);
 
-  G4VModularPhysicsList *physicsList = new QGSP_BERT;
+  //G4VModularPhysicsList *physicsList = new QGSP_BERT;
+  G4VModularPhysicsList *physicsList = new FTFP_BERT;
   G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics();
+  //opticalPhysics->SetScintillationByParticleType(true);
   physicsList->RegisterPhysics(opticalPhysics);
   runManager->SetUserInitialization(physicsList);
 

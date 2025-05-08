@@ -10,9 +10,57 @@
 #include "PSD_DetectorConstruction.h"
 #include "PSD_PMT_SD.h"
 #include "PSD_SensitiveDetector.h"
+#include "G4Material.hh"
+#include "G4MaterialPropertiesTable.hh"
+#include "G4SystemOfUnits.hh"
+
+
 PSD_DetectorConstruction::PSD_DetectorConstruction() {}
 
 PSD_DetectorConstruction::~PSD_DetectorConstruction() {}
+
+//Not working and hence not used
+G4Material* PSD_DetectorConstruction::GetScintillatorWithPSD(){
+    // 1. Define the scintillator material (simplified EJ-301)
+    G4double density = 0.874 * g/cm3;
+    G4Material* EJ301 = new G4Material("EJ301", density, 2);
+    EJ301->AddElement(G4NistManager::Instance()->FindOrBuildElement("H"), 10); // Hydrogen
+    EJ301->AddElement(G4NistManager::Instance()->FindOrBuildElement("C"), 9);  // Carbon
+
+    // 2. Create a material properties table
+    auto mpt = new G4MaterialPropertiesTable();
+
+    // 3. Define photon energy range (optical)
+    const G4int nEntries = 2;
+    G4double photonEnergy[nEntries]    = {2.0 * eV, 3.5 * eV};
+    G4double refractiveIndex[nEntries] = {1.50, 1.50};
+    G4double absorption[nEntries]      = {3.5 * m, 3.5 * m};
+    G4double scintilFast[nEntries]     = {1.0, 1.0};
+
+    mpt->AddProperty("RINDEX",        photonEnergy, refractiveIndex, nEntries);
+    mpt->AddProperty("ABSLENGTH",     photonEnergy, absorption,      nEntries);
+    //mpt->AddProperty("FASTCOMPONENT", photonEnergy, scintilFast,     nEntries);
+    mpt->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
+    mpt->AddConstProperty("RESOLUTIONSCALE", 1.0);
+    //mpt->AddConstProperty("YIELDRATIO", 1.0); // fallback if particle-type not defined
+
+    // 4. Particle-dependent scintillation parameters
+    // --- Electrons (gamma interaction)
+    mpt->AddConstProperty("ELECTRONSCINTILLATIONYIELD", 10000. / MeV);
+    mpt->AddConstProperty("ELECTRONFASTTIMECONSTANT", 3.2 * ns);
+    mpt->AddConstProperty("ELECTRONSLOWTIMECONSTANT", 32.0 * ns);
+    mpt->AddConstProperty("ELECTRONYIELDRATIO", 0.85);  // Mostly fast component
+
+    // --- Protons (neutron interaction)
+    mpt->AddConstProperty("PROTONSCINTILLATIONYIELD", 9500. / MeV);
+    mpt->AddConstProperty("PROTONFASTTIMECONSTANT", 4.5 * ns);
+    mpt->AddConstProperty("PROTONSLOWTIMECONSTANT", 55.0 * ns);
+    mpt->AddConstProperty("PROTONYIELDRATIO", 0.45);  // More slow component
+
+    // 5. Assign MPT to the material
+    EJ301->SetMaterialPropertiesTable(mpt);
+    return EJ301;
+}
 
 G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
   G4NistManager *nist = G4NistManager::Instance();
@@ -26,10 +74,13 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   G4Material *pmtMat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
+  //G4Material *psdMaterial = GetScintillatorWithPSD();
+
   // TODO : Create your desired detectors here
   //  Crystal
   G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
-  G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, crystalMat, "Crystal");
+  //G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, psdMaterial, "Crystal");
+  G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, pmtMat, "Crystal");
   G4VPhysicalVolume *phyCrystal =
       new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
   const G4int nEntries = 2;
