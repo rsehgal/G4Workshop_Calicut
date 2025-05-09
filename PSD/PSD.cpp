@@ -12,6 +12,7 @@
 #include "PSD_SteppingAction.h"
 #include "PSD_EventAction.h"
 #include "PSD_RunAction.h"
+#include "PSD_TrackingAction.h"
 int main(int argc, char **argv) {
   G4UIExecutive *ui = nullptr;
   if (argc == 1) {
@@ -33,6 +34,7 @@ int main(int argc, char **argv) {
   // runManager->SetUserAction(new PSD_SteppingAction());
   runManager->SetUserAction(new PSD_RunAction());
   runManager->SetUserAction(new PSD_EventAction());
+  //runManager->SetUserAction(new PSD_TrackingAction());
 
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();
