@@ -58,6 +58,10 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
+    mptCrystal->AddProperty("ELECTRONSCINTILLATIONYIELD", photonEnergy, scintSpectrum, nEntries);
+    mptCrystal->AddProperty("PROTONSCINTILLATIONYIELD", photonEnergy, scintSpectrum, nEntries);
+    mptCrystal->AddProperty("IONSCINTILLATIONYIELD", photonEnergy, scintSpectrum, nEntries);
+
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV); // Example yield
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
     // mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 10. * ns);
@@ -70,6 +74,9 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
 
     mptCrystal->AddConstProperty("PROTONSCINTILLATIONTIMECONSTANT1", 2.0 * ns);  // slow
     mptCrystal->AddConstProperty("PROTONSCINTILLATIONTIMECONSTANT2", 35.0 * ns); // slow
+    mptCrystal->AddConstProperty("IONSCINTILLATIONTIMECONSTANT1", 2.0 * ns);  // slow
+    mptCrystal->AddConstProperty("IONSCINTILLATIONTIMECONSTANT2", 35.0 * ns); // slow
+
     // mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.85);             // 85% fast
     // mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15);             // 15% slow""""""""
 
@@ -80,6 +87,12 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct() {
     mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD2", 0.05);
     mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD1", 0.05);
     mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD2", 0.95);
+    mptCrystal->AddConstProperty("IONSCINTILLATIONYIELD1", 0.05);
+    mptCrystal->AddConstProperty("IONSCINTILLATIONYIELD2", 0.95);
+
+
+    //mptCrystal->AddConstProperty("GAMMASCINTILLATIONYIELD1", 0.95,true);
+    //mptCrystal->AddConstProperty("GAMMASCINTILLATIONYIELD2", 0.05,true);
 
     // mptCrystal->AddConstProperty("FASTSCINTILLATIONRISETIME", 1. * ns);
 

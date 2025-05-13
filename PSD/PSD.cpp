@@ -6,6 +6,7 @@
 #include "QGSP_BERT.hh"
 #include "QGSP_BIC.hh"
 #include "QGSP_BIC_HP.hh"
+#include "FTFP_BERT_HP.hh"
 
 #include "G4OpticalParameters.hh"
 #include "G4OpticalPhysics.hh"
@@ -29,7 +30,8 @@ int main(int argc, char **argv) {
 
   // G4VModularPhysicsList *physicsList = new QGSP_BERT;
   // G4VModularPhysicsList *physicsList = new FTFP_BERT;
-  G4VModularPhysicsList *physicsList = new QGSP_BIC_HP; // FTFP_BERT;
+  //G4VModularPhysicsList *physicsList = new QGSP_BIC_HP; // FTFP_BERT;
+  G4VModularPhysicsList *physicsList = new FTFP_BERT_HP();
   G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics();
   // opticalPhysics->SetScintillationByParticleType(true);
   // opticalPhysics->SetScintillationYieldFactor(1.0);
@@ -39,7 +41,9 @@ int main(int argc, char **argv) {
   // auto scintProcess = opticalPhysics->GetScintillation();
   runManager->SetUserInitialization(physicsList);
   G4OpticalParameters *opticalParams = G4OpticalParameters::Instance();
+
   opticalParams->SetScintByParticleType(true);
+
   std::cout << "=========== RAMAN : Optical Parameters List ==============" << std::endl;
   G4OpticalParameters::Instance()->Dump();
   std::cout << "======================================" << std::endl;
@@ -47,7 +51,7 @@ int main(int argc, char **argv) {
   // runManager->SetUserAction(new PSD_SteppingAction());
   runManager->SetUserAction(new PSD_RunAction());
   runManager->SetUserAction(new PSD_EventAction());
-  runManager->SetUserAction(new PSD_TrackingAction());
+  //runManager->SetUserAction(new PSD_TrackingAction());
 
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();

@@ -1,7 +1,8 @@
 /run/initialize
-/gun/particle gamma
+/run/printProgress 10
+/gun/particle neutron 
 /gun/energy 1000 keV
 /gun/position 0 0 -10 cm
 /gun/direction 0 0 1
-/run/beamOn 1
+/run/beamOn 10
 
