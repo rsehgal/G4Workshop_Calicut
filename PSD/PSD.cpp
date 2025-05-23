@@ -17,12 +17,18 @@
 #include "PSD_RunAction.h"
 #include "PSD_SteppingAction.h"
 #include "PSD_TrackingAction.h"
+#include "string"
 
 int main(int argc, char **argv) {
   G4UIExecutive *ui = nullptr;
   if (argc == 1) {
     ui = new G4UIExecutive(argc, argv);
   }
+  std::string outfilename;
+  if(argc > 1)
+   outfilename = std::string(argv[1])+".root";
+  else
+   outfilename = "interactive.root";
 
   G4RunManager *runManager = new G4RunManager;
   runManager->SetUserInitialization(new PSD_DetectorConstruction());
@@ -49,9 +55,10 @@ int main(int argc, char **argv) {
   std::cout << "======================================" << std::endl;
   runManager->SetUserAction(new PSD_PrimaryGeneratorAction());
   // runManager->SetUserAction(new PSD_SteppingAction());
-  runManager->SetUserAction(new PSD_RunAction());
+  //runManager->SetUserAction(new PSD_RunAction());
+  runManager->SetUserAction(new PSD_RunAction(const_cast<char*>(outfilename.c_str())));
   runManager->SetUserAction(new PSD_EventAction());
-  //runManager->SetUserAction(new PSD_TrackingAction());
+  runManager->SetUserAction(new PSD_TrackingAction());
 
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();

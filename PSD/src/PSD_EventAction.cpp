@@ -6,6 +6,8 @@
 #include "PSD_RunAction.h"
 #include "G4RunManager.hh"
 #include "G4AnalysisManager.hh"
+#include "Randomize.hh"
+
 PSD_EventAction::PSD_EventAction()
 {
   G4UserRunAction *userRunAction = const_cast<G4UserRunAction *>(G4RunManager::GetRunManager()->GetUserRunAction());
@@ -31,7 +33,8 @@ void PSD_EventAction::EndOfEventAction(const G4Event *event)
   std::vector<int> pulse;
   for (unsigned int i = 0; i < hitCollection->entries(); i++) {
     //(*hitCollection)[i]->Print();
-    pulse.push_back((*hitCollection)[i]->GetArrivalTime());
+    int arrivalTime = (*hitCollection)[i]->GetArrivalTime();
+    pulse.push_back(G4RandGauss::shoot(arrivalTime,3));
   }
     fRunAction->FillPulse(pulse);
     analMan->AddNtupleRow(0);

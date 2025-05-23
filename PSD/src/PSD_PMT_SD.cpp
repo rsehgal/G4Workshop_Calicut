@@ -20,6 +20,8 @@ PSD_PMT_SD::~PSD_PMT_SD() {}
 
 void PSD_PMT_SD::Initialize(G4HCofThisEvent *hce)
 {
+  // if(fPmtHitCollection_1)
+  //	delete fPmtHitCollection_1;
   fPmtHitCollection_1   = new PmtHitCollection(SensitiveDetectorName, collectionName[0]);
   fPmtHitCollectionID_1 = GetCollectionID(0);
   hce->AddHitsCollection(fPmtHitCollectionID_1, fPmtHitCollection_1);
@@ -30,11 +32,24 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
   G4Track *track  = step->GetTrack();
   G4double energy = track->GetKineticEnergy();
 
-  if (track->GetParticleDefinition() == G4OpticalPhoton::Definition()) {
-    PSD_PMT_Hit *newHit = new PSD_PMT_Hit;
-    newHit->SetArrivalTime(track->GetGlobalTime());
-    // G4cout << "Detected energy: " << energy / MeV << " MeV" << G4endl;
-    fPmtHitCollection_1->insert(newHit);
+  G4StepPoint *preStep = step->GetPreStepPoint();
+
+  // std::cout << "Hit Collection Size : " << fPmtHitCollection_1->entries() << std::endl;
+  //  if(step->IsFirstStepInVolume())
+  //if (preStep->GetStepStatus() == fGeomBoundary) 
+
+   {
+
+    // std::cout << "First step detected............" << std::endl;
+    if (track->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
+      // i== G4OpticalPhoton::Definition()) {
+      PSD_PMT_Hit *newHit = new PSD_PMT_Hit;
+      newHit->SetArrivalTime(track->GetGlobalTime());
+       //G4cout <<"ParentID : " << track->GetParentID()<< " : TrackID : " << track->GetTrackID() << " : Detected energy:" << energy / MeV << " MeV" << G4endl; 
+   
+      fPmtHitCollection_1->insert(newHit);
+      track->SetTrackStatus(fStopAndKill);
+    }
   }
   // newHit->Print();
   //  track->SetTrackStatus(fStopAndKill);
@@ -43,5 +58,5 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
 
 void PSD_PMT_SD::EndOfEvent(G4HCofThisEvent *hce)
 {
-  // std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
+  //std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
 }
