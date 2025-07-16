@@ -17,7 +17,7 @@ void ftree(char *filename, int neutron = 0)
   int breakCounter     = 0;
   for (Long64_t i = 0; i < nentries; i++) {
     nbytes += ftree->GetEntry(i);
-    // std::cout << "Pulse Size : " << pulse->size() << std::endl;
+    std::cout << "Pulse Size : " << pulse->size() << std::endl;
     if (pulse->size() < 4) continue;
 
     TH1F *hist = new TH1F("pulse", "pulse", 150, 0, 150);

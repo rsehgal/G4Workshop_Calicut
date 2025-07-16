@@ -32,17 +32,19 @@ void PSD_TrackingAction::PostUserTrackingAction(const G4Track *track)
 
   // std::cout << "Tracking Action ends....." << std::endl;
 #if(1)
-  if (track->GetTrackID() == 1) {
+//  if (track->GetTrackID() == 1) 
+
+{
     int photonCounter       = 0;
     const auto *secondaries = fpTrackingManager->GimmeSecondaries();
     //std::cout << "TRACKING : Total Number of Secondaries created : " << secondaries->size() << std::endl;
 
     for (unsigned int i = 0; i < secondaries->size(); i++) {
 
+     //std::cout << "==== Secondary Name : " << secondaries->at(i)->GetDefinition()->GetParticleName() << std::endl;
       if ( // secondaries->at(i)->GetParentID() == 1 &&
           secondaries->at(i)->GetDefinition() == G4OpticalPhoton::Definition()) {
-        // std::cout << "Optical Photon created by :  " << secondaries->at(i)->GetCreatorProcess()->GetProcessName() <<
-        // std::endl;
+         //std::cout << "Optical Photon created by :  " << secondaries->at(i)->GetCreatorProcess()->GetProcessName() << std::endl;
         photonCounter++;
       } else {
 

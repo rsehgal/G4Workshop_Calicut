@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
   //runManager->SetUserAction(new PSD_RunAction());
   runManager->SetUserAction(new PSD_RunAction(const_cast<char*>(outfilename.c_str())));
   runManager->SetUserAction(new PSD_EventAction());
-  runManager->SetUserAction(new PSD_TrackingAction());
+  //runManager->SetUserAction(new PSD_TrackingAction());
 
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();
