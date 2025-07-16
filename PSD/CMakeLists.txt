@@ -11,6 +11,17 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
+
+option(FOR_GAMMA "Use Decay constants for gamma" ON)
+if(FOR_GAMMA)
+add_definitions(-DFOR_GAMMA)
+endif(FOR_GAMMA)
+
+option(FOR_NEUTRON "Use Decay constants for neutron" OFF)
+if(FOR_NEUTRON)
+add_definitions(-DFOR_NEUTRON)
+endif(FOR_NEUTRON)
+
 # Include directories
 include_directories(${Geant4_INCLUDE_DIRS} include)
 

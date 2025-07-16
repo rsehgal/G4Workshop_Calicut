@@ -68,48 +68,17 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV); 
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 8600. / MeV); 
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 35 * ns); 
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 1.0 * ns);  
-
-    mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONTIMECONSTANT1", 3.5 * ns); 
-    mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONTIMECONSTANT2", 10 * ns);  
-    mptCrystal->AddConstProperty("PROTONSCINTILLATIONTIMECONSTANT1", 2.0 * ns);   
-    mptCrystal->AddConstProperty("PROTONSCINTILLATIONTIMECONSTANT2", 35.0 * ns);  
-    mptCrystal->AddConstProperty("IONSCINTILLATIONTIMECONSTANT1", 2.0 * ns);      
-    mptCrystal->AddConstProperty("IONSCINTILLATIONTIMECONSTANT2", 35.0 * ns);     
-
-    std::vector<double> electronEnergy = {0.1 * MeV, 0.5 * MeV, 1.0 * MeV, 2.0 * MeV, 5.0 * MeV};
-    std::vector<double> electronYield  = {8000.0, 9500.0, 10000.0, 10200.0, 10500.0};
-    mptCrystal->AddProperty("ELECTRONSCINTILLATIONYIELD", electronEnergy.data(), electronYield.data(),electronEnergy.size());
-    //mptCrystal->AddProperty("ELECTRONSCINTILLATIONYIELD", photonEnergy,scintSpectrum,2);
-    mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD1", 0.95);
-    mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD2", 0.05);
-
-    std::vector<double> ionEnergy = {1.0 * MeV, 5.0 * MeV, 10.0 * MeV, 20.0 * MeV, 50.0 * MeV};
-    std::vector<double> ionYield  = {300., 800., 1200., 1500., 1800.};
-    mptCrystal->AddProperty("IONSCINTILLATIONYIELD", ionEnergy.data(), ionYield.data(), ionEnergy.size());
-    //mptCrystal->AddProperty("IONSCINTILLATIONYIELD", photonEnergy, scintSpectrum, 2);
-    mptCrystal->AddConstProperty("IONSCINTILLATIONYIELD1", 0.05);
-    mptCrystal->AddConstProperty("IONSCINTILLATIONYIELD2", 0.95);
-
-    std::vector<double> pEnergy = {1.0 * MeV, 10.0 * MeV, 50.0 * MeV, 100.0 * MeV};
-    std::vector<double> pYield  = {1000., 2000., 4000., 5000.};
-    mptCrystal->AddProperty("PROTONSCINTILLATIONYIELD", pEnergy.data(), pYield.data(), pEnergy.size());
-    //mptCrystal->AddProperty("PROTONSCINTILLATIONYIELD", photonEnergy,scintSpectrum,2);
-    mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD1", 0.05);
-    mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD2", 0.95);
-
-
-    G4double deuteronE[nEntries] = {1.0 * keV, 10.0 * MeV};
-    G4double deuteronYield[nEntries] = {2500. / MeV, 2500. / MeV};
-
-    mptCrystal->AddProperty("DEUTERONSCINTILLATIONYIELD", deuteronE, deuteronYield, nEntries);
-    mptCrystal->AddConstProperty("DEUTERONSCINTILLATIONYIELD1", 0.1);  // Fast component fraction (e.g.)
-    mptCrystal->AddConstProperty("DEUTERONSCINTILLATIONYIELD2", 0.9);  // Slow component fraction
-    mptCrystal->AddConstProperty("DEUTERONSCINTILLATIONTIMECONSTANT1", 3.0 * ns); 
-    mptCrystal->AddConstProperty("DEUTERONSCINTILLATIONTIMECONSTANT2", 30.0 * ns);
+#ifdef FOR_GAMMA
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 35 * ns);  
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 270 * ns);  
+#elif defined(FOR_NEUTRON)
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 59 * ns);  
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 460 * ns);  
+#endif
 
     crystalMat->SetMaterialPropertiesTable(mptCrystal);
   }

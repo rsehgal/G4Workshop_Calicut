@@ -46,9 +46,8 @@ int main(int argc, char **argv) {
   physicsList->RegisterPhysics(opticalPhysics);
   // auto scintProcess = opticalPhysics->GetScintillation();
   runManager->SetUserInitialization(physicsList);
-  G4OpticalParameters *opticalParams = G4OpticalParameters::Instance();
-
-  opticalParams->SetScintByParticleType(true);
+  //G4OpticalParameters *opticalParams = G4OpticalParameters::Instance();
+  //opticalParams->SetScintByParticleType(true);
 
   std::cout << "=========== RAMAN : Optical Parameters List ==============" << std::endl;
   G4OpticalParameters::Instance()->Dump();
