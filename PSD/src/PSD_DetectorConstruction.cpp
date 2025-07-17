@@ -75,10 +75,17 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 35 * ns);  
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 270 * ns);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.8);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.05);  
 #elif defined(FOR_NEUTRON)
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 59 * ns);  
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 460 * ns);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.4);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.3);  
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.3);  
+
 #endif
 
     crystalMat->SetMaterialPropertiesTable(mptCrystal);
