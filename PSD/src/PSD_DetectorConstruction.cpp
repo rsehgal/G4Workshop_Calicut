@@ -11,6 +11,7 @@
 #include "G4SystemOfUnits.hh"
 #include "PSD_DetectorConstruction.h"
 #include "PSD_PMT_SD.h"
+#include "PSD_Crystal_SD.h"
 #include "PSD_SensitiveDetector.h"
 
 PSD_DetectorConstruction::PSD_DetectorConstruction() {}
@@ -145,5 +146,10 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   PSD_PMT_SD *sdDetector = new PSD_PMT_SD("PMT_1");
   G4SDManager::GetSDMpointer()->AddNewDetector(sdDetector);
   logicPMT->SetSensitiveDetector(sdDetector);
+
+  PSD_Crystal_SD *sdCrystal = new PSD_Crystal_SD("SensitiveCrystal","Crystal");
+  G4SDManager::GetSDMpointer()->AddNewDetector(sdCrystal);
+  logicCrystal->SetSensitiveDetector(sdCrystal);
+
   return physWorld;
 }

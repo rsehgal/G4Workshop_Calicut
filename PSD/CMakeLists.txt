@@ -11,6 +11,15 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
+file(GLOB MAC_FILES ${PROJECT_SOURCE_DIR}/MacFiles/*)
+message(STATUS ${MAC_FILES})
+file(COPY ${MAC_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+option(VERBOSE "Use Decay constants for gamma" OFF)
+if(VERBOSE)
+add_definitions(-DVERBOSE)
+endif(VERBOSE)
+
 
 option(FOR_GAMMA "Use Decay constants for gamma" ON)
 if(FOR_GAMMA)
