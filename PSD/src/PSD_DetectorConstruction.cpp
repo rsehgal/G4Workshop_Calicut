@@ -13,7 +13,9 @@
 #include "PSD_PMT_SD.h"
 #include "PSD_Crystal_SD.h"
 #include "PSD_SensitiveDetector.h"
-
+#include "G4Tubs.hh"
+//#include "G4EmSaturation.hh"
+//#include "G4LossTableManager.hh"
 PSD_DetectorConstruction::PSD_DetectorConstruction() {}
 
 PSD_DetectorConstruction::~PSD_DetectorConstruction() {}
@@ -40,12 +42,23 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
+    //G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    //emSaturation->SetBirksConstant(myScintillatorMaterial, 0.0125 * mm/MeV);
+
+
   // TODO : Create your desired detectors here
   //  Crystal
-  G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
+  //G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
+
+  double crystalDia = 2*2.54*cm;
+  double crystalHei = 2*2.54*cm;
+  double pmtHei = 2*2.54*cm;
+
+  G4Tubs *solidCrystal = new G4Tubs("Crystal",0.,0.5*crystalDia,0.5*crystalHei,0.,2*M_PI);
   G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, crystalMat, "Crystal");
   G4VPhysicalVolume *phyCrystal =
-      new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
+      //new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicCrystal, "Crystal", logicWorld, false, 0);
   const G4int nEntries = 2;
 
   {
@@ -69,9 +82,48 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 8600. / MeV); 
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV); 
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
+
+#define SCINTILLATOR_TAU1 13 * ns
+#define SCINTILLATOR_TAU2 35 * ns
+#define SCINTILLATOR_TAU3 270 * ns
+mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", SCINTILLATOR_TAU1);
+mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", SCINTILLATOR_TAU2);
+mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
+//mptCrystal->AddConstProperty("BIRKS_CONSTANT_PROTON", 0.126*mm/MeV);
+
+
+//mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 3.0 * ns);   // Fast decay (Component 1)
+//mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 250.0 * ns);
+// For electrons (mostly gamma signal): Favor the FAST component (1)
+//G4double particleEnergy[] = { 0.1*keV, 1.0*MeV, 10.0*MeV }; // Energy points
+//G4double electronYield[] = { 1.0, 10000.0, 100000.0 };      // Yield at those points
+
+// Add as a property vector (AddProperty), not a constant
+//mptCrystal->AddProperty("ELECTRONSCINTILLATIONYIELD", particleEnergy, electronYield, 3);
+//mptCrystal->AddProperty("PROTONSCINTILLATIONYIELD", particleEnergy, electronYield, 3);
+
+//mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD1", 0.95); // 95% fast
+//mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD2", 0.05); // 5% slow (tail)
+
+// For protons (mostly neutron signal): Favor the SLOW component (2) 
+// This is the key to creating the longer neutron tail!
+//mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD1", 0.30);  // 30% fast
+//mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD2", 0.70);  // 70% slow (tail)""""""""    
 #ifdef FOR_GAMMA
+    // Gamma: Higher fast/medium yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.8);
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15);
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.05); // Lower slow yield
+#elif defined(FOR_NEUTRON)
+    // Neutron: Higher slow yield for PSD
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.60); // Lower fast yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15); // Similar medium yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.25); // HIGHER slow yield
+#endif
+
+/*#ifdef FOR_GAMMA
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 35 * ns);  
     mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 270 * ns);  
@@ -87,15 +139,17 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.3);  
 
 #endif
-
+*/
     crystalMat->SetMaterialPropertiesTable(mptCrystal);
   }
 
   // PMT
-  G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
+  //G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
+  G4Tubs *solidPMT = new G4Tubs("PMT",0.,0.5*crystalDia,0.5*pmtHei,0.,2*M_PI);
   G4LogicalVolume *logicPMT = new G4LogicalVolume(solidPMT, pmtMat, "PMT");
   G4VPhysicalVolume *phyPMT =
-      new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
+      //new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
+        new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5*crystalHei+0.5*pmtHei), logicPMT, "PMT", logicWorld, false, 0);
 
   G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
 

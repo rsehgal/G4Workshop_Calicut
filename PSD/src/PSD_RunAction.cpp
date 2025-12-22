@@ -15,7 +15,7 @@ void PSD_RunAction::BeginOfRunAction(const G4Run *)
   //analMan->OpenFile("output.root");
   analMan->OpenFile(fOutfileName);
   analMan->CreateNtuple("ftree", "A Tree to store pulse and PSD data");
-  analMan->CreateNtupleIColumn("pulse", fPulse);
+  analMan->CreateNtupleIColumn("Samples", fPulse);
   analMan->FinishNtuple();
 }
 

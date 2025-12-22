@@ -7,6 +7,7 @@
 #include "QGSP_BIC.hh"
 #include "QGSP_BIC_HP.hh"
 #include "FTFP_BERT_HP.hh"
+//#include "QGSP_BIC_HP_EMZ.hh"
 
 #include "G4OpticalParameters.hh"
 #include "G4OpticalPhysics.hh"
@@ -18,6 +19,7 @@
 #include "PSD_SteppingAction.h"
 #include "PSD_TrackingAction.h"
 #include "string"
+#include "G4OpticalParameters.hh"
 
 int main(int argc, char **argv) {
   G4UIExecutive *ui = nullptr;
@@ -36,10 +38,13 @@ int main(int argc, char **argv) {
 
   // G4VModularPhysicsList *physicsList = new QGSP_BERT;
   // G4VModularPhysicsList *physicsList = new FTFP_BERT;
-  //G4VModularPhysicsList *physicsList = new QGSP_BIC_HP; // FTFP_BERT;
-  G4VModularPhysicsList *physicsList = new FTFP_BERT_HP();
+  G4VModularPhysicsList *physicsList = new QGSP_BIC_HP; // FTFP_BERT;
+  //G4VModularPhysicsList *physicsList = new QGSP_BIC_HP_EMZ(); // FTFP_BERT_HP();
+    
   G4OpticalPhysics *opticalPhysics = new G4OpticalPhysics();
-  // opticalPhysics->SetScintillationByParticleType(true);
+  //opticalPhysics->SetScintillationByParticleType(true);
+  //G4OpticalParameters::Instance()->SetScintByParticleType(true);
+
   // opticalPhysics->SetScintillationYieldFactor(1.0);
   // opticalPhysics->SetScintillationExcitationRatio(1.0);
   //  opticalPhysics->SetScintillationByParticleType(true);

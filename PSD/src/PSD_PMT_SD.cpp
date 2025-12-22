@@ -46,7 +46,8 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
       PSD_PMT_Hit *newHit = new PSD_PMT_Hit;
       newHit->SetArrivalTime(track->GetGlobalTime());
        //G4cout <<"ParentID : " << track->GetParentID()<< " : TrackID : " << track->GetTrackID() << " : Detected energy:" << energy / MeV << " MeV" << G4endl; 
-   
+  
+      //newHit->Print() ;
       fPmtHitCollection_1->insert(newHit);
       track->SetTrackStatus(fStopAndKill);
     }
