@@ -118,9 +118,9 @@ mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.05); // Lower slow yield
 #elif defined(FOR_NEUTRON)
     // Neutron: Higher slow yield for PSD
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.60); // Lower fast yield
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15); // Similar medium yield
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.25); // HIGHER slow yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.50); // Lower fast yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.20); // Similar medium yield
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.30); // HIGHER slow yield
 #endif
 
 /*#ifdef FOR_GAMMA
