@@ -7,8 +7,10 @@
 #define PSD_HitCollections_h
 
 #include "G4THitsCollection.hh"
+#include "G4TDigiCollection.hh"
 #include "PSD_PMT_Hit.h"
+#include "PSD_Digit.h"
 
 using PmtHitCollection = G4THitsCollection<PSD_PMT_Hit>;
-
+using DigiCollection = G4TDigiCollection<PSD_Digit>;
 #endif

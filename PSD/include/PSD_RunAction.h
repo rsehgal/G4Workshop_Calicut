@@ -9,6 +9,7 @@ class G4Run;
 class PSD_RunAction : public G4UserRunAction {
    char *fOutfileName;
    std::vector<int> fPulse;
+   std::vector<double> fConvolvedPulse;
 public:
     PSD_RunAction();
     PSD_RunAction(char *filename);
@@ -16,6 +17,7 @@ public:
     virtual void BeginOfRunAction(const G4Run*);
     virtual void EndOfRunAction(const G4Run*);
     void FillPulse(std::vector<int> pulse);
+    void FillConvolvedPulse(std::vector<double> pulse);
 };
 
 #endif

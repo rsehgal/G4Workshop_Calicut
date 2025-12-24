@@ -16,7 +16,10 @@ void PSD_RunAction::BeginOfRunAction(const G4Run *)
   analMan->OpenFile(fOutfileName);
   analMan->CreateNtuple("ftree", "A Tree to store pulse and PSD data");
   analMan->CreateNtupleIColumn("Samples", fPulse);
+  analMan->CreateNtupleDColumn("Pulse", fConvolvedPulse);
   analMan->FinishNtuple();
+
+
 }
 
 void PSD_RunAction::FillPulse(std::vector<int> pulse)
@@ -27,10 +30,19 @@ void PSD_RunAction::FillPulse(std::vector<int> pulse)
     fPulse.push_back(pulse[i]);
   }
 }
+void PSD_RunAction::FillConvolvedPulse(std::vector<double> pulse)
+{
+  if(fConvolvedPulse.size())
+  fConvolvedPulse.clear();
+  for (unsigned int i = 0; i < pulse.size(); i++) {
+    fConvolvedPulse.push_back(pulse[i]);
+  }
+}
 
 void PSD_RunAction::EndOfRunAction(const G4Run *)
 {
   G4AnalysisManager *analMan = G4AnalysisManager::Instance();
   analMan->Write();
   analMan->CloseFile();
+
 }
