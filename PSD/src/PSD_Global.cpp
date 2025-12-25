@@ -7,4 +7,4 @@
 #include "G4SystemOfUnits.hh"
 
 double binSize = 1.*ns;
-int numBins = 10;
+int numBins = 400;

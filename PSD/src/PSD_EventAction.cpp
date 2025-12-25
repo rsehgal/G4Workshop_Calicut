@@ -39,8 +39,8 @@ void PSD_EventAction::EndOfEventAction(const G4Event *event)
   for (unsigned int i = 0; i < hitCollection->entries(); i++) {
     //(*hitCollection)[i]->Print();
     int arrivalTime = (*hitCollection)[i]->GetArrivalTime();
-    // pulse.push_back(G4RandGauss::shoot(arrivalTime,3));
-    pulse.push_back(arrivalTime);
+    pulse.push_back(G4RandGauss::shoot(arrivalTime,3));
+    //pulse.push_back(arrivalTime);
   }
   fRunAction->FillPulse(pulse);
   analMan->AddNtupleRow(0);
