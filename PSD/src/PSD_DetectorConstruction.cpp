@@ -40,6 +40,8 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
 
   //G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
+
   G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
     //G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
@@ -77,6 +79,7 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     G4double scintYield[nEntries] = {10000. / MeV, 10000. / MeV};
 
     // Create MPT (Material Properties Table)
+    
     G4MaterialPropertiesTable *mptCrystal = new G4MaterialPropertiesTable();
     mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);

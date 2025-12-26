@@ -6,6 +6,8 @@
 #include "PSD_PMT_Hit.h"
 #include "PSD_PMT_SD.h"
 #include "G4OpticalPhoton.hh"
+#include "G4VProcess.hh"
+#include "PSD_TrackInfo.h"
 PSD_PMT_SD::PSD_PMT_SD(const G4String &name)
     : G4VSensitiveDetector(name), fPmtHitCollection_1(nullptr), fPmtHitCollectionID_1(-1)
 {
@@ -36,18 +38,30 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
 
   // std::cout << "Hit Collection Size : " << fPmtHitCollection_1->entries() << std::endl;
   //  if(step->IsFirstStepInVolume())
-  //if (preStep->GetStepStatus() == fGeomBoundary) 
+  // if (preStep->GetStepStatus() == fGeomBoundary)
 
-   {
+  {
 
     // std::cout << "First step detected............" << std::endl;
     if (track->GetParticleDefinition()->GetParticleName() == "opticalphoton") {
       // i== G4OpticalPhoton::Definition()) {
       PSD_PMT_Hit *newHit = new PSD_PMT_Hit;
       newHit->SetArrivalTime(track->GetGlobalTime());
-       //G4cout <<"ParentID : " << track->GetParentID()<< " : TrackID : " << track->GetTrackID() << " : Detected energy:" << energy / MeV << " MeV" << G4endl; 
-  
-      //newHit->Print() ;
+      // std::cout << "Creator Process Name : " << track->GetCreatorProcess()->GetProcessName() << std::endl;
+
+      //--------------
+      PSD_TrackInfo *parentInfo = (PSD_TrackInfo *)track->GetUserInformation();
+      if (0 && parentInfo) {
+        G4String origin = parentInfo->GetTriggerProcess();
+        std::cout <<"Trigger Process Name : " << origin << std::endl;
+        // This 'origin' is the interaction that triggered the whole chain
+      }
+
+      //------------
+      // G4cout <<"ParentID : " << track->GetParentID()<< " : TrackID : " << track->GetTrackID() << " : Detected
+      // energy:" << energy / MeV << " MeV" << G4endl;
+
+      // newHit->Print() ;
       fPmtHitCollection_1->insert(newHit);
       track->SetTrackStatus(fStopAndKill);
     }
@@ -59,5 +73,5 @@ G4bool PSD_PMT_SD::ProcessHits(G4Step *step, G4TouchableHistory *)
 
 void PSD_PMT_SD::EndOfEvent(G4HCofThisEvent *hce)
 {
-  //std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
+  // std::cout << "No. of Photon detected in PMT : " << fPmtHitCollection_1->entries() << std::endl;
 }

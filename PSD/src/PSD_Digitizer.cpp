@@ -4,6 +4,7 @@
 #include "PSD_Digit.h"
 #include "G4SystemOfUnits.hh"
 #include "PSD_Global.h"
+#include "Randomize.hh"
 PSD_Digitizer::PSD_Digitizer(const G4String &name) : G4VDigitizerModule(name)
 {
   collectionName.push_back("MyDigiCollection");
@@ -52,6 +53,7 @@ void PSD_Digitizer::Digitize()
     */
     for (G4int i = 0; i < hitCollection->entries(); i++) {
       G4double t_hit = (*hitCollection)[i]->GetArrivalTime();
+      G4double gainScale = G4RandGauss::shoot(1.0, 0.3);
 
       // Find exactly where this photon starts in our waveform
       G4int startBin = std::floor(t_hit / binSize);
@@ -65,7 +67,7 @@ void PSD_Digitizer::Digitize()
         G4double dt        = t_current - t_hit; // Time since photon arrived
 
         // Add the SPE response to the existing waveform
-        waveform[j] += SinglePhotoelectronResponse(dt);
+        waveform[j] += gainScale*SinglePhotoelectronResponse(dt);
       }
     }
 
