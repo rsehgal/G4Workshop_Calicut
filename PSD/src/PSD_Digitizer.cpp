@@ -19,8 +19,11 @@ PSD_Digitizer::~PSD_Digitizer() {}
 
 double PSD_Digitizer::SinglePhotoelectronResponse(double dt)
 {
-  double tauRise  = 1.0 * ns;
-  double tauDecay = 10.0 * ns;
+  double tauRise  = 14*ns;//1.0 * ns;
+  double tauDecay = 3*ns;//10.0 * ns;
+  /*double tauRise  = 3*ns;//1.0 * ns;
+  double tauDecay = 14*ns;//10.0 * ns;*/
+
   if (dt < 0) return 0;
   return (exp(-dt / tauDecay) - exp(-dt / tauRise));
 }

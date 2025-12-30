@@ -40,7 +40,7 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
 
   //G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-  crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
+  //crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
 
   G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
