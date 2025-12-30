@@ -38,29 +38,25 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   G4LogicalVolume *logicWorld  = new G4LogicalVolume(solidWorld, worldMat, "World");
   G4VPhysicalVolume *physWorld = new G4PVPlacement(nullptr, G4ThreeVector(), logicWorld, "World", nullptr, false, 0);
 
-  //G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
+  // G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-  //crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
+  // crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
 
-  G4Material *pmtMat     = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
-
-    //G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-    //emSaturation->SetBirksConstant(myScintillatorMaterial, 0.0125 * mm/MeV);
-
+  G4Material *pmtMat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
   // TODO : Create your desired detectors here
   //  Crystal
-  //G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
+  // G4Box *solidCrystal = new G4Box("Crystal", 1 * cm, 1 * cm, 2 * cm);
 
-  double crystalDia = 2*2.54*cm;
-  double crystalHei = 2*2.54*cm;
-  double pmtHei = 2*2.54*cm;
+  double crystalDia = 2 * 2.54 * cm;
+  double crystalHei = 2 * 2.54 * cm;
+  double pmtHei     = 2 * 2.54 * cm;
 
-  G4Tubs *solidCrystal = new G4Tubs("Crystal",0.,0.5*crystalDia,0.5*crystalHei,0.,2*M_PI);
+  G4Tubs *solidCrystal          = new G4Tubs("Crystal", 0., 0.5 * crystalDia, 0.5 * crystalHei, 0., 2 * M_PI);
   G4LogicalVolume *logicCrystal = new G4LogicalVolume(solidCrystal, crystalMat, "Crystal");
   G4VPhysicalVolume *phyCrystal =
-      //new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
-    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicCrystal, "Crystal", logicWorld, false, 0);
+      // new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
+      new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicCrystal, "Crystal", logicWorld, false, 0);
   const G4int nEntries = 2;
 
   {
@@ -79,41 +75,21 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     G4double scintYield[nEntries] = {10000. / MeV, 10000. / MeV};
 
     // Create MPT (Material Properties Table)
-    
+
     G4MaterialPropertiesTable *mptCrystal = new G4MaterialPropertiesTable();
     mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
     mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV); 
+    mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
 
 #define SCINTILLATOR_TAU1 13 * ns
 #define SCINTILLATOR_TAU2 35 * ns
 #define SCINTILLATOR_TAU3 270 * ns
-mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", SCINTILLATOR_TAU1);
-mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", SCINTILLATOR_TAU2);
-mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
-//mptCrystal->AddConstProperty("BIRKS_CONSTANT_PROTON", 0.126*mm/MeV);
-
-
-//mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 3.0 * ns);   // Fast decay (Component 1)
-//mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 250.0 * ns);
-// For electrons (mostly gamma signal): Favor the FAST component (1)
-//G4double particleEnergy[] = { 0.1*keV, 1.0*MeV, 10.0*MeV }; // Energy points
-//G4double electronYield[] = { 1.0, 10000.0, 100000.0 };      // Yield at those points
-
-// Add as a property vector (AddProperty), not a constant
-//mptCrystal->AddProperty("ELECTRONSCINTILLATIONYIELD", particleEnergy, electronYield, 3);
-//mptCrystal->AddProperty("PROTONSCINTILLATIONYIELD", particleEnergy, electronYield, 3);
-
-//mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD1", 0.95); // 95% fast
-//mptCrystal->AddConstProperty("ELECTRONSCINTILLATIONYIELD2", 0.05); // 5% slow (tail)
-
-// For protons (mostly neutron signal): Favor the SLOW component (2) 
-// This is the key to creating the longer neutron tail!
-//mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD1", 0.30);  // 30% fast
-//mptCrystal->AddConstProperty("PROTONSCINTILLATIONYIELD2", 0.70);  // 70% slow (tail)""""""""    
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", SCINTILLATOR_TAU1);
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", SCINTILLATOR_TAU2);
+    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
 #ifdef FOR_GAMMA
     // Gamma: Higher fast/medium yield
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.85);
@@ -126,33 +102,16 @@ mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.30); // HIGHER slow yield
 #endif
 
-/*#ifdef FOR_GAMMA
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 35 * ns);  
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 270 * ns);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.8);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.15);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.05);  
-#elif defined(FOR_NEUTRON)
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 13 * ns); 
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT2", 59 * ns);  
-    mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", 460 * ns);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD1", 0.4);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD2", 0.3);  
-    mptCrystal->AddConstProperty("SCINTILLATIONYIELD3", 0.3);  
-
-#endif
-*/
     crystalMat->SetMaterialPropertiesTable(mptCrystal);
   }
 
   // PMT
-  //G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
-  G4Tubs *solidPMT = new G4Tubs("PMT",0.,0.5*crystalDia,0.5*pmtHei,0.,2*M_PI);
+  // G4Box *solidPMT           = new G4Box("PMT", 0.5 * cm, 0.5 * cm, 0.5 * cm);
+  G4Tubs *solidPMT          = new G4Tubs("PMT", 0., 0.5 * crystalDia, 0.5 * pmtHei, 0., 2 * M_PI);
   G4LogicalVolume *logicPMT = new G4LogicalVolume(solidPMT, pmtMat, "PMT");
   G4VPhysicalVolume *phyPMT =
-      //new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
-        new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5*crystalHei+0.5*pmtHei), logicPMT, "PMT", logicWorld, false, 0);
+      // new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * cm), logicPMT, "PMT", logicWorld, false, 0);
+      new G4PVPlacement(0, G4ThreeVector(0, 0, 0.5 * crystalHei + 0.5 * pmtHei), logicPMT, "PMT", logicWorld, false, 0);
 
   G4double photonEnergy[nEntries] = {1.5 * eV, 3.5 * eV};
 
@@ -192,9 +151,6 @@ mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
   G4MaterialPropertiesTable *mptInterface = new G4MaterialPropertiesTable();
   G4double reflectivity_zero[num]         = {1., 1.}; // {0.0, 0.0};
   G4double eff_pmt[num]                   = {1., 1.}; // {0.35, 0.35};
-  // G4double eff_pmt[num]         = {1.0,1.0};
-  // mptInterface->AddProperty("REFLECTIVITY", ephoton, reflectivity_zero, num);
-  // mptInterface->AddProperty("EFFICIENCY", ephoton, eff_pmt, num);
   crystalToPMTSurface->SetMaterialPropertiesTable(mptInterface);
 
   // Apply border surface only at the shared face
@@ -211,7 +167,7 @@ mptCrystal->AddConstProperty("SCINTILLATIONTIMECONSTANT3", SCINTILLATOR_TAU3);
   G4SDManager::GetSDMpointer()->AddNewDetector(sdDetector);
   logicPMT->SetSensitiveDetector(sdDetector);
 
-  PSD_Crystal_SD *sdCrystal = new PSD_Crystal_SD("SensitiveCrystal","Crystal");
+  PSD_Crystal_SD *sdCrystal = new PSD_Crystal_SD("SensitiveCrystal", "Crystal");
   G4SDManager::GetSDMpointer()->AddNewDetector(sdCrystal);
   logicCrystal->SetSensitiveDetector(sdCrystal);
 
