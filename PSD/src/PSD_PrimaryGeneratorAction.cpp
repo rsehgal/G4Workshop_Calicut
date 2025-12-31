@@ -3,6 +3,8 @@
 #include "G4ParticleTable.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+
 PSD_PrimaryGeneratorAction::PSD_PrimaryGeneratorAction()
 {
   G4int n_particle               = 1;
@@ -32,5 +34,14 @@ void PSD_PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
   // TODO :  Logic to change the particle position for each event
 
+  double radius = G4RandFlat::shoot(0.,5.*cm);
+  double angle = G4RandFlat::shoot(0.,2*M_PI);
+  double xval = radius*cos(angle);
+  double yval = radius*sin(angle);
+  double zval = 0.;
+  G4ThreeVector currentPos = fParticleGun->GetParticlePosition();
+  G4ThreeVector endPos=G4ThreeVector(xval,yval,zval);
+  G4ThreeVector dir = (endPos-currentPos).unit();
+  fParticleGun->SetParticleMomentumDirection(dir);
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
