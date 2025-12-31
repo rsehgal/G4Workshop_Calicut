@@ -4,12 +4,12 @@ PSD_PMT_Hit::PSD_PMT_Hit() : fPhotonArrivalTime(0) {}
 
 PSD_PMT_Hit::~PSD_PMT_Hit() {}
 
-void PSD_PMT_Hit::SetArrivalTime(int tme)
+void PSD_PMT_Hit::SetArrivalTime(long unsigned int tme)
 {
   fPhotonArrivalTime = tme;
 }
 
-int PSD_PMT_Hit::GetArrivalTime() const
+long unsigned int PSD_PMT_Hit::GetArrivalTime() const
 {
   return fPhotonArrivalTime;
 }

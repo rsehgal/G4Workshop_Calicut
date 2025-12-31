@@ -19,8 +19,8 @@ PSD_Digitizer::~PSD_Digitizer() {}
 
 double PSD_Digitizer::SinglePhotoelectronResponse(double dt)
 {
-  double tauRise  = 14*ns;//1.0 * ns;
-  double tauDecay = 3*ns;//10.0 * ns;
+  double tauRise  = 14 * ns; // 1.0 * ns;
+  double tauDecay = 3 * ns;  // 10.0 * ns;
   /*double tauRise  = 3*ns;//1.0 * ns;
   double tauDecay = 14*ns;//10.0 * ns;*/
 
@@ -30,15 +30,15 @@ double PSD_Digitizer::SinglePhotoelectronResponse(double dt)
 
 void PSD_Digitizer::Digitize()
 {
-  //std::cout << "Digitize function called........." << std::endl;
+  // std::cout << "Digitize function called........." << std::endl;
   G4DigiManager *digiMgr          = G4DigiManager::GetDMpointer();
   G4int hitCollectionID           = digiMgr->GetHitsCollectionID("pmtHitCollection_1");
   PmtHitCollection *hitCollection = (PmtHitCollection *)(digiMgr->GetHitsCollection(hitCollectionID));
   DigiCollection *digiCollection  = new DigiCollection("V1730", "TestDigits");
   if (hitCollection) {
     // Define sampling parameters
-    //const G4double binSize = 0.5 * ns;
-    //const G4int numBins    = 10;
+    // const G4double binSize = 0.5 * ns;
+    // const G4int numBins    = 10;
     std::vector<double> waveform(numBins, 0.0);
 
     //  Loop through hits (photons)
@@ -55,7 +55,7 @@ void PSD_Digitizer::Digitize()
         }
     */
     for (G4int i = 0; i < hitCollection->entries(); i++) {
-      G4double t_hit = (*hitCollection)[i]->GetArrivalTime();
+      G4double t_hit     = (*hitCollection)[i]->GetArrivalTime();
       G4double gainScale = G4RandGauss::shoot(1.0, 0.3);
 
       // Find exactly where this photon starts in our waveform
@@ -70,13 +70,17 @@ void PSD_Digitizer::Digitize()
         G4double dt        = t_current - t_hit; // Time since photon arrived
 
         // Add the SPE response to the existing waveform
-        waveform[j] += gainScale*SinglePhotoelectronResponse(dt);
+        if (j < 0 || j > numBins) {
+          //std::cerr << "Unexpected Arrival time detected..... Hence skipping the Hit......." << std::endl;
+          break;
+        }
+        waveform[j] += gainScale * SinglePhotoelectronResponse(dt);
       }
     }
 
     PSD_Digit *digit = new PSD_Digit();
     digit->SetWaveform(waveform);
-    //digit->Print();
+    // digit->Print();
     digiCollection->insert(digit);
   }
   StoreDigiCollection(digiCollection);
