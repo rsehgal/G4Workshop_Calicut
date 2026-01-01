@@ -5,12 +5,17 @@
 #include "G4SystemOfUnits.hh"
 #include "PSD_Global.h"
 #include "Randomize.hh"
-PSD_Digitizer::PSD_Digitizer(const G4String &name) : G4VDigitizerModule(name)
+#include "TH1F.h"
+PSD_Digitizer::PSD_Digitizer(const G4String &name) : G4VDigitizerModule(name)//, fShort(shortGate), fLong(longGate)
 {
   collectionName.push_back("MyDigiCollection");
 }
 
-PSD_Digitizer::PSD_Digitizer(const G4String &name, const G4String &collName) : G4VDigitizerModule(name)
+/*PSD_Digitizer::PSD_Digitizer(const G4String &name, const G4String &collName, short int sGate, short int lGate)
+    : G4VDigitizerModule(name), fShort(sGate), fLong(lGate)*/
+PSD_Digitizer::PSD_Digitizer(const G4String &name, const G4String &collName)
+    : G4VDigitizerModule(name)
+
 {
   collectionName.push_back(collName);
 }
@@ -71,7 +76,7 @@ void PSD_Digitizer::Digitize()
 
         // Add the SPE response to the existing waveform
         if (j < 0 || j > numBins) {
-          //std::cerr << "Unexpected Arrival time detected..... Hence skipping the Hit......." << std::endl;
+          // std::cerr << "Unexpected Arrival time detected..... Hence skipping the Hit......." << std::endl;
           break;
         }
         waveform[j] += gainScale * SinglePhotoelectronResponse(dt);
@@ -81,7 +86,32 @@ void PSD_Digitizer::Digitize()
     PSD_Digit *digit = new PSD_Digit();
     digit->SetWaveform(waveform);
     // digit->Print();
+
+    //std::cout <<"Qlong : " << Energy(waveform) << " :: QShort : " << EnergyShort(waveform) << std::endl;
     digiCollection->insert(digit);
   }
   StoreDigiCollection(digiCollection);
 }
+
+/*double PSD_Digitizer::Integral(std::vector<double> waveform, short int gateWidth)
+{
+  TH1F *hist = new TH1F("waveForm", "waveForm", waveform.size(), 0, waveform.size());
+
+  for (unsigned int i = 0; i < waveform.size(); i++) {
+    hist->SetBinContent(i, waveform[i]);
+  }
+
+  double integral = hist->Integral(0, gateWidth);
+  delete hist;
+  return integral;
+}
+
+double PSD_Digitizer::Energy(std::vector<double> waveform)
+{
+  return Integral(waveform, fLong);
+}
+
+double PSD_Digitizer::EnergyShort(std::vector<double> waveform)
+{
+  return Integral(waveform, fShort);
+}*/

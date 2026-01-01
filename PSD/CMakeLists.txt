@@ -11,6 +11,10 @@ else()
   find_package(Geant4 REQUIRED)
 endif()
 
+find_package(ROOT REQUIRED)
+include(${ROOT_USE_FILE})
+include_directories(${ROOT_INCLUDE_DIRS})
+
 file(GLOB MAC_FILES ${PROJECT_SOURCE_DIR}/MacFiles/*)
 message(STATUS ${MAC_FILES})
 file(COPY ${MAC_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -43,7 +47,7 @@ file(COPY ${MAC_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 add_executable(${PROJECT_NAME} ${SOURCES} PSD.cpp)
 
 # Link with Geant4 libraries
-target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 # Set C++ standard
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)

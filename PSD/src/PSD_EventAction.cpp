@@ -43,7 +43,6 @@ void PSD_EventAction::EndOfEventAction(const G4Event *event)
     pulse.push_back(arrivalTime);
   }
   fRunAction->FillPulse(pulse);
-  analMan->AddNtupleRow(0);
 
   // Trying to fetch digitizer
   G4DigiManager *fDM         = G4DigiManager::GetDMpointer();
@@ -60,13 +59,18 @@ void PSD_EventAction::EndOfEventAction(const G4Event *event)
   if (dc) {
     //std::cout <<"DigiCollection found in EndOfEvent............" << std::endl;
     G4int n_digits = dc->entries();
+    //std::cout << "Num of digits : " << n_digits << std::endl;
     for (G4int i = 0; i < n_digits; i++) {
       //(*dc)[i]->Print();
       std::vector<G4double> waveform = (*dc)[i]->GetWaveform();
 
       // Proceed to Step 2: Save this data!
       fRunAction->FillConvolvedPulse(waveform);
+      //std::cout << "Energy long : " << (*dc)[i]->Energy() << std::endl;
+      analMan->FillNtupleDColumn(0, 1,-1.*(*dc)[i]->Energy());
+      analMan->FillNtupleDColumn(0, 2,-1.*(*dc)[i]->EnergyShort());
     }
+  analMan->AddNtupleRow(0);
   }
 
   //---

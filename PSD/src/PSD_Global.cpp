@@ -8,3 +8,5 @@
 
 double binSize = 1.*ns;
 int numBins = 400;
+short int shortGate=30;
+short int longGate=300;

@@ -8,5 +8,6 @@
 
 extern double binSize;
 extern int numBins;
-
+extern short int shortGate;
+extern short int longGate;
 #endif

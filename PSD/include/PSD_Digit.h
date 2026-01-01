@@ -11,6 +11,9 @@ public:
     void SetWaveform(const std::vector<double>& wf);
     std::vector<double> GetWaveform() const;
     void Print();
+    double Integral(short int gateWidth);
+    double Energy();
+    double EnergyShort();
 };
 
 #endif
