@@ -14,6 +14,7 @@
 #include "PSD_Crystal_SD.h"
 #include "PSD_SensitiveDetector.h"
 #include "G4Tubs.hh"
+#include "EJ276D.h"
 //#include "G4EmSaturation.hh"
 //#include "G4LossTableManager.hh"
 PSD_DetectorConstruction::PSD_DetectorConstruction() {}
@@ -40,7 +41,7 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
 
   // G4Material *crystalMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   G4Material *crystalMat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-  //crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
+  crystalMat->GetIonisation()->SetBirksConstant(0.126 * mm/MeV);
 
   G4Material *pmtMat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
@@ -57,7 +58,7 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
   G4VPhysicalVolume *phyCrystal =
       // new G4PVPlacement(0, G4ThreeVector(0, 0, -2 * cm), logicCrystal, "Crystal", logicWorld, false, 0);
       new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicCrystal, "Crystal", logicWorld, false, 0);
-  const G4int nEntries = 2;
+   const G4int nEntries = 2;
 
   {
     const G4int nEntries            = 2;
@@ -79,8 +80,9 @@ G4VPhysicalVolume *PSD_DetectorConstruction::Construct()
     G4MaterialPropertiesTable *mptCrystal = new G4MaterialPropertiesTable();
     mptCrystal->AddProperty("RINDEX", photonEnergy, rIndex, nEntries);
     mptCrystal->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries);
-    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintSpectrum, nEntries);
-    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergy, scintSpectrum, nEntries);
+    int nEntriess = photonEnergyy.size();
+    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergyy, scintSpectrumm, nEntriess);
+    mptCrystal->AddProperty("SCINTILLATIONCOMPONENT2", photonEnergyy, scintSpectrumm, nEntriess);
     mptCrystal->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
     mptCrystal->AddConstProperty("RESOLUTIONSCALE", 1.0);
 
