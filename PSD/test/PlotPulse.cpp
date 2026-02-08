@@ -6,18 +6,163 @@
 #include <TTree.h>
 #include <iostream>
 #include <vector>
+#include <TLine.h>
+#include <TAxis.h>
+
+#include <vector>
+#include <iostream>
 
 std::vector<float> t;
+/*struct CFDResult {
+    std::vector<float> bipolarPulse;
+    float zeroCrossingSample; // Fractional sample index
+};
 
-TGraph *GetGraph(std::vector<float> pulse) {
+CFDResult CalculateCFD(const std::vector<float>& signal, int delay, float fraction) {
+    CFDResult result;
+    size_t n = signal.size();
+    result.bipolarPulse.assign(n, 0.0f);
+
+    // 1. Generate Bipolar Waveform: B(i) = (Signal[i] * fraction) - Signal[i - delay]
+    for (size_t i = delay; i < n; ++i) {
+        result.bipolarPulse[i] = (signal[i] * fraction) - signal[i - delay];
+    }
+
+    // 2. Find Zero Crossing
+    // We look for the transition from positive to negative on the leading edge.
+    // Note: Since your pulse is negative-going, the logic depends on polarity.
+    result.zeroCrossingSample = -1.0f; // Default if not found
+
+    for (size_t i = delay + 1; i < n; ++i) {
+        // Looking for the zero-crossing point on the steep rise/fall
+        if (result.bipolarPulse[i-1] > 0 && result.bipolarPulse[i] <= 0) {
+            
+            // Linear Interpolation for sub-sample precision:
+            // y = mx + c -> solve for y=0
+            float y1 = result.bipolarPulse[i-1];
+            float y2 = result.bipolarPulse[i];
+            float fractionalPart = y1 / (y1 - y2);
+            
+            result.zeroCrossingSample = static_cast<float>(i - 1) + fractionalPart;
+            break; // Capture the first valid crossing
+        }
+    }
+
+    return result;
+}*/
+
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+struct CFDResult {
+    std::vector<float> bipolarPulse;
+    float zeroCrossingSample; 
+};
+
+CFDResult CalculateCFD(const std::vector<float>& smoothedSignal, int delay, float fraction, float armingThreshold=10 ) {
+    CFDResult result;
+    size_t n = smoothedSignal.size();
+    result.bipolarPulse.assign(n, 0.0f);
+
+    // 1. Generate Bipolar Waveform
+    // Formula: B[i] = (Signal[i] * fraction) - Signal[i - delay]
+    for (size_t i = delay; i < n; ++i) {
+        result.bipolarPulse[i] = (smoothedSignal[i] * fraction) - smoothedSignal[i - delay];
+    }
+
+    // 2. Search for the valid Zero-Crossing
+    result.zeroCrossingSample = -1.0f; 
+
+    for (size_t i = 1; i < n; ++i) {
+        // A: Look for the Negative-to-Positive crossing
+        if (result.bipolarPulse[i-1] < 0 && result.bipolarPulse[i] >= 0) {
+            
+            // B: ARMING GATE - Crucial for Negative Pulses
+            // Check if the original pulse is deep enough at this moment.
+            // Since your pulse is negative, 'smoothedSignal[i]' will be a negative value (e.g., -30).
+            // We use the absolute value to compare against your positive arming threshold.
+            if (std::abs(smoothedSignal[i]) > armingThreshold) {
+                float y1 = result.bipolarPulse[i-1];
+                float y2 = result.bipolarPulse[i];
+                
+                // Linear Interpolation for sub-sample precision
+                // The distance between samples is 1.0. 
+                // fractionalPart = distance from (i-1) to the zero point.
+                float fractionalPart = (-y1) / (y2 - y1);
+                
+                result.zeroCrossingSample = static_cast<float>(i - 1) + fractionalPart;
+                
+                // We stop at the first valid crossing that passes the arming gate
+                break; 
+            }
+        }
+    }
+    return result;
+}
+
+TGraph *GetGraph(std::vector<float> pulse,char *title="Sampled Pulse") {
   TGraph *gr = new TGraph(t.size(), &t[0], &pulse[0]);
   // gr->SetTitle(Form("Pulse %lld;Sample Index;Amplitude", i));
-  gr->SetTitle("Sampled Pulse");
+  gr->SetTitle(title);
   gr->SetMarkerStyle(20);
   gr->SetMarkerSize(0.5);
 
   return gr;
 }
+std::vector<float> BaselineSubtracted(std::vector<float> pulse, int ns) {
+    int n = pulse.size();
+    std::vector<float> bs(n);
+    int accum=0;
+    for(unsigned int i=0; i < ns ; i++){
+	accum += pulse[i];
+    }
+    accum /= ns;
+    
+
+    for (int i = 0; i < n; i++) {
+	bs[i]=pulse[i]-accum;
+    }
+    return bs;
+}
+
+std::vector<float> MedianFilter(std::vector<float> pulse, int windowSize) {
+    int n = pulse.size();
+    std::vector<float> cleaned(n);
+    int edge = windowSize / 2;
+
+    for (int i = 0; i < n; i++) {
+        std::vector<float> window;
+        for (int j = i - edge; j <= i + edge; j++) {
+            if (j >= 0 && j < n) window.push_back(pulse[j]);
+        }
+        // Sort the window to find the median
+        std::sort(window.begin(), window.end());
+        cleaned[i] = window[window.size() / 2];
+    }
+    return cleaned;
+}
+
+std::vector<float> MovingAverage(std::vector<float> pulse, int ns) {
+    int n = pulse.size();
+    std::vector<float> smoothedPulse(n);
+    int half = ns / 2;
+
+    for (int i = 0; i < n; i++) {
+        float sum = 0;
+        int count = 0;
+        // Centered window: i - half to i + half
+        for (int j = i - half; j <= i + half; j++) {
+            if (j >= 0 && j < n) {
+                sum += pulse[j];
+                count++;
+            }
+        }
+        smoothedPulse[i] = sum / count;
+    }
+    return smoothedPulse;
+}
+#if(0)
 std::vector<float> MovingAverage(std::vector<float> pulse, unsigned short ns) {
   int pulseLen = pulse.size();
   if (pulseLen > ns) {
@@ -43,6 +188,7 @@ std::vector<float> MovingAverage(std::vector<float> pulse, unsigned short ns) {
     return pulse;
   }
 }
+#endif
 
 int main(int argc, char *argv[]) {
 
@@ -84,7 +230,7 @@ int main(int argc, char *argv[]) {
 
     t.push_back(i);
   }
-  auto pulseNum = 10;
+  auto pulseNum = std::atoi(argv[2]);//10;
   std::vector<float> pulse;
   Long64_t nbytes = 0;
   for (Long64_t i = 0; i < nentries; i++) {
@@ -98,7 +244,7 @@ int main(int argc, char *argv[]) {
     if (i == pulseNum) {
       // 1. Explicitly create a canvas
       TCanvas *can = new TCanvas("can", "Pulse Plot", 800, 600);
-      can->Divide(2, 1);
+      can->Divide(2, 2);
 
       std::cout << "Pulse size : " << pulse.size() << std::endl;
 
@@ -106,15 +252,44 @@ int main(int argc, char *argv[]) {
 
       // 3. Draw and Force Update
       can->cd(1);
-      TGraph *gr = GetGraph(pulse);
+      TGraph *gr = GetGraph(pulse,"Initial Pulse");
       gr->Draw("ACP"); // A=Axes, L=Line, P=Points
 
 
       can->cd(2);
-      TGraph *gr2 = GetGraph(MovingAverage(pulse,6));
+      //TGraph *gr2 = GetGraph(MovingAverage(pulse,10),"Smoothed pulse");
+      std::vector<float> bs=BaselineSubtracted(MovingAverage(MedianFilter(pulse,10),6),16);
+      TGraph *gr2 = GetGraph(bs,"Smoothed pulse");
+      //TGraph *gr2 = GetGraph(BaselineSubtracted(pulse,16),"Baseline Subtracted");
       gr2->Draw("ACP"); // A=Axes, L=Line, P=Points
 
 
+      can->cd(3);
+      CFDResult res=CalculateCFD(bs,5,0.3);
+      TGraph *gr3 = GetGraph(res.bipolarPulse,"CFD pulse");
+      std::cout << "Zero Crossover : " << res.zeroCrossingSample << std::endl;
+      std::cout << "Coarse Timestamp : " << Timestamp << std::endl;
+      unsigned short preTrigger =32;
+      unsigned short timePeriod=1;
+      std::cout << "====== Assuming PreTrigger is set at  " << preTrigger << " ===== " << std::endl;
+      ULong64_t fineTs = Timestamp + (res.zeroCrossingSample-preTrigger)*timePeriod*1000.;
+      std::cout << "FineTimestamp : " << fineTs << std::endl;
+      gr3->Draw("ACP");
+
+      double xVal = res.zeroCrossingSample;//2.0;
+double yMin = gr3->GetYaxis()->GetXmin();
+double yMax = gr3->GetYaxis()->GetXmax();
+double xMin = gr3->GetXaxis()->GetXmin();
+double xMax = gr3->GetXaxis()->GetXmax();
+
+TLine *vLine = new TLine(xVal, yMin, xVal, yMax);
+TLine *hLine = new TLine(xMin, 0, xMax, 0);
+vLine->SetLineColor(kRed);
+hLine->SetLineColor(kRed);
+//vLine->SetLineWidth(2);
+vLine->Draw("same");
+hLine->Draw("same");
+    
       can->Update();
       can->Modified();
 
