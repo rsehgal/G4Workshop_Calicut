@@ -55,5 +55,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 add_executable(PlotPulse ../test/PlotPulse.cpp)
 target_link_libraries(PlotPulse ${ROOT_LIBRARIES})
+
+add_executable(PlotPulse2 ../test/PlotPulse2.cpp)
+target_link_libraries(PlotPulse2 ${ROOT_LIBRARIES})
+
 # Install
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
