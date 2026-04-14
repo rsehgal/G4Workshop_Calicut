@@ -18,7 +18,7 @@ SENSITIVE_DETECTOR="${PROJECT_NAME}_SensitiveDetector"
 PRIMARY_GENERATOR_ACTION="${PROJECT_NAME}_PrimaryGeneratorAction"
 STEPPING_ACTION="${PROJECT_NAME}_SteppingAction"
 TRACKING_ACTION="${PROJECT_NAME}_TrackingAction"
-ACTION_INITIALIZATION="${PROJECT_NAME}_ACTION_INITIALIZATION"
+ACTION_INITIALIZATION="${PROJECT_NAME}_ActionInitialization"
 EVENT_ACTION="${PROJECT_NAME}_EventAction"
 RUN_ACTION="${PROJECT_NAME}_RunAction"
 HIT="${SENSITIVE_DETECTOR}_Hit"
@@ -46,9 +46,7 @@ cat << EOF > $PROJECT_NAME/$PROJECT_NAME.cpp
 #include "G4UIExecutive.hh"
 
 #include "${DETECTOR_CONSTRUCTION}.h"
-#include "${PRIMARY_GENERATOR_ACTION}.h"
-#include "${STEPPING_ACTION}.h"
-
+#include "${ACTION_INITIALIZATION}.h"
 int main(int argc, char** argv) {
     G4UIExecutive* ui = nullptr;
     if (argc == 1) {
@@ -56,10 +54,10 @@ int main(int argc, char** argv) {
     }
 
     G4RunManager* runManager = new G4RunManager;
+
     runManager->SetUserInitialization(new ${DETECTOR_CONSTRUCTION}());
     runManager->SetUserInitialization(new QGSP_BERT);
-    runManager->SetUserAction(new ${PRIMARY_GENERATOR_ACTION}());
-    runManager->SetUserAction(new ${STEPPING_ACTION}());
+    runManager->SetUserInitialization(new ${ACTION_INITIALIZATION}());
 
     G4VisManager* visManager = new G4VisExecutive();
     visManager->Initialize();
@@ -85,6 +83,54 @@ int main(int argc, char** argv) {
 }
 EOF
 echo "Main program files created in current directory."
+
+# 1. Create ActionInitialization Header
+cat << EOF > $PROJECT_NAME/include/${ACTION_INITIALIZATION}.h
+#ifndef ${AI_GUARD}_HH
+#define ${AI_GUARD}_HH
+
+#include "G4VUserActionInitialization.hh"
+
+class ${ACTION_INITIALIZATION} : public G4VUserActionInitialization {
+public:
+    ${ACTION_INITIALIZATION}();
+    virtual ~${ACTION_INITIALIZATION}();
+    virtual void BuildForMaster() const override;
+    virtual void Build() const override;
+};
+#endif
+EOF
+
+# 2. Create ActionInitialization Source
+cat << EOF > $PROJECT_NAME/src/${ACTION_INITIALIZATION}.cpp
+#include "${ACTION_INITIALIZATION}.h"
+#include "${PRIMARY_GENERATOR_ACTION}.h"
+#include "${STEPPING_ACTION}.h"
+#include "${TRACKING_ACTION}.h"
+#include "${EVENT_ACTION}.h"
+#include "${RUN_ACTION}.h"
+
+${ACTION_INITIALIZATION}::${ACTION_INITIALIZATION}() : G4VUserActionInitialization() {}
+${ACTION_INITIALIZATION}::~${ACTION_INITIALIZATION}() {}
+
+void ${ACTION_INITIALIZATION}::BuildForMaster() const {
+    //Mandatory for Multithreading mode
+    SetUserAction(new ${RUN_ACTION}());
+}
+
+void ${ACTION_INITIALIZATION}::Build() const {
+    //Mandatory
+    SetUserAction(new ${PRIMARY_GENERATOR_ACTION}());
+
+    //Data Management (Recommended)
+    //SetUserAction(new ${RUN_ACTION});
+    //SetUserAction(new ${EVENT_ACTION});
+
+    //Granular Control (Optional)
+    //SetUserAction(new ${STEPPING_ACTION}());
+    //SetUserAction(new ${TRACKING_ACTION}());
+}
+EOF
 
 # Create DetectorConstruction header file
 cat << EOF > $PROJECT_NAME/include/${DETECTOR_CONSTRUCTION}.h
