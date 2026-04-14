@@ -18,11 +18,24 @@ SENSITIVE_DETECTOR="${PROJECT_NAME}_SensitiveDetector"
 PRIMARY_GENERATOR_ACTION="${PROJECT_NAME}_PrimaryGeneratorAction"
 STEPPING_ACTION="${PROJECT_NAME}_SteppingAction"
 TRACKING_ACTION="${PROJECT_NAME}_TrackingAction"
+ACTION_INITIALIZATION="${PROJECT_NAME}_ACTION_INITIALIZATION"
 EVENT_ACTION="${PROJECT_NAME}_EventAction"
 RUN_ACTION="${PROJECT_NAME}_RunAction"
 HIT="${SENSITIVE_DETECTOR}_Hit"
 MODULARPHYSICSLIST="${PROJECT_NAME}_ModularPhysicsList"
 USERPHYSICSLIST="${PROJECT_NAME}_UserPhysicsList"
+
+DC_GUARD=$(to_upper ${DETECTOR_CONSTRUCTION})
+PG_GUARD=$(to_upper ${PRIMARY_GENERATOR_ACTION})
+SA_GUARD=$(to_upper ${STEPPING_ACTION})
+EA_GUARD=$(to_upper ${EVENT_ACTION})
+RA_GUARD=$(to_upper ${RUN_ACTION})
+TA_GUARD=$(to_upper ${TRACKING_ACTION})
+AI_GUARD=$(to_upper ${ACTION_INITIALIZATION})
+SD_GUARD=$(to_upper ${SENSITIVE_DETECTOR})
+HT_GUARD=$(to_upper ${HIT})
+MPL_GUARD=$(to_upper ${MODULARPHYSICS_LIST})
+UPL_GUARD=$(to_upper ${USERPHYSICS_LIST})
 
 # Create main application file
 cat << EOF > $PROJECT_NAME/$PROJECT_NAME.cpp
@@ -75,8 +88,8 @@ echo "Main program files created in current directory."
 
 # Create DetectorConstruction header file
 cat << EOF > $PROJECT_NAME/include/${DETECTOR_CONSTRUCTION}.h
-#ifndef ${DETECTOR_CONSTRUCTION^^}_HH
-#define ${DETECTOR_CONSTRUCTION^^}_HH
+#ifndef ${DC_GUARD}_HH
+#define ${DC_GUARD}_HH
 
 #include "G4VUserDetectorConstruction.hh"
 
@@ -131,8 +144,8 @@ echo "Detector Construction files created......."
 
 # Create PrimaryGeneratorAction header file
 cat << EOF > $PROJECT_NAME/include/${PRIMARY_GENERATOR_ACTION}.h
-#ifndef ${PRIMARY_GENERATOR_ACTION^^}_HH
-#define ${PRIMARY_GENERATOR_ACTION^^}_HH
+#ifndef ${PG_GUARD}_HH
+#define ${PG_GUARD}_HH
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
@@ -189,8 +202,8 @@ echo "Primary Generator files created......."
 
 # Create SteppingAction header file
 cat << EOF > $PROJECT_NAME/include/${STEPPING_ACTION}.h
-#ifndef ${STEPPING_ACTION^^}_HH
-#define ${STEPPING_ACTION^^}_HH
+#ifndef ${SA_GUARD}_HH
+#define ${SA_GUARD}_HH
 
 #include "G4UserSteppingAction.hh"
 
@@ -226,8 +239,8 @@ echo "Stepping action files created......."
 
 # Create SensitiveDetector header file
 cat << EOF > $PROJECT_NAME/include/${SENSITIVE_DETECTOR}.h
-#ifndef ${SENSITIVE_DETECTOR^^}_HH
-#define ${SENSITIVE_DETECTOR^^}_HH
+#ifndef ${SD_GUARD}_HH
+#define ${SD_GUARD}_HH
 
 #include "G4VSensitiveDetector.hh"
 
@@ -266,8 +279,8 @@ echo "Sensitive Detector files created......."
 
 # Create TrackingAction header file
 cat << EOF > $PROJECT_NAME/include/${TRACKING_ACTION}.h
-#ifndef ${TRACKING_ACTION^^}_HH
-#define ${TRACKING_ACTION^^}_HH
+#ifndef ${TA_GUARD}_HH
+#define ${TA_GUARD}_HH
 
 #include "G4UserTrackingAction.hh"
 #include "G4Track.hh"
@@ -310,8 +323,8 @@ echo "Tracking Action files created......."
 
 # Create EventAction header file
 cat << EOF > $PROJECT_NAME/include/${EVENT_ACTION}.h
-#ifndef ${EVENT_ACTION^^}_HH
-#define ${EVENT_ACTION^^}_HH
+#ifndef ${EA_GUARD}_HH
+#define ${EA_GUARD}_HH
 
 #include "G4UserEventAction.hh"
 #include "G4Event.hh"
@@ -352,8 +365,8 @@ echo "EventAction files created............"
 
 # Create RunAction header file
 cat << EOF > $PROJECT_NAME/include/${RUN_ACTION}.h
-#ifndef ${RUN_ACTION^^}_HH
-#define ${RUN_ACTION^^}_HH
+#ifndef ${RA_GUARD}_HH
+#define ${RA_GUARD}_HH
 
 class G4Run;
 
@@ -395,8 +408,8 @@ echo "RunAction files created......"
 
 # Create Hit Class header file
 cat << EOF > $PROJECT_NAME/include/${HIT}.h
-#ifndef ${HIT^^}_HH
-#define ${HIT^^}_HH
+#ifndef ${HT_GUARD}_HH
+#define ${HT_GUARD}_HH
 
 #include "G4VHit.hh"
 
@@ -427,8 +440,8 @@ echo "Hit files created........"
 
 # Create Modular Physics  List header file
 cat << EOF > $PROJECT_NAME/include/${MODULARPHYSICSLIST}.h
-#ifndef ${MODULARPHYSICSLIST^^}_HH
-#define ${MODULARPHYSICSLIST^^}_HH
+#ifndef ${MPL_GUARD}_HH
+#define ${MPL_GUARD}_HH
 
 #include "G4VModularPhysicsList.hh"
 
@@ -459,8 +472,8 @@ echo "Modular physics file created........."
 
 # Create User Physics List header file
 cat << EOF > $PROJECT_NAME/include/${USERPHYSICSLIST}.h
-#ifndef ${USERPHYSICSLIST^^}_HH
-#define ${USERPHYSICSLIST^^}_HH
+#ifndef ${UPL_GUARD}_HH
+#define ${UPL_GUARD}_HH
 
 #include "G4VUserPhysicsList.hh"
 
@@ -612,4 +625,11 @@ EOF
 echo "Sample macro file created......."
 # Print success message
 echo "Geant4 application skeleton created in '$PROJECT_NAME' directory."
-
+echo ""
+echo "-------------------------------------------------------"
+echo "Success! Project '$PROJECT_NAME' created."
+echo "To build:"
+echo "  mkdir build && cd build"
+echo "  cmake .."
+echo "  make"
+echo "-------------------------------------------------------"
